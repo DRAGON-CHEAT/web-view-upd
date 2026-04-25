@@ -1,0 +1,53 @@
+<div class="card" tabindex="0">
+    <h2 id="app-title">Dragon Apps</h2>
+    <button class="btn" id="main-btn" onclick="handleAction()">تحميل التطبيق</button>
+    
+    <div class="progress-container" id="p-cont">
+        <div class="progress-bar" id="p-bar"></div>
+    </div>
+    <p id="status-text" style="font-size: 12px; color: #aaa;"></p>
+</div>
+
+<script>
+    let currentStatus = "idle"; // idle, preparing, downloading, ready
+
+    function handleAction() {
+        const btn = document.getElementById('main-btn');
+        if (currentStatus === "idle") {
+            startPreparing();
+        } else if (currentStatus === "ready") {
+            window.Android.installApk(); // استدعاء التثبيت من الأندرويد
+        }
+    }
+
+    function startPreparing() {
+        currentStatus = "preparing";
+        document.getElementById('p-cont').style.display = 'block';
+        let bar = document.getElementById('p-bar');
+        let width = 0;
+        let interval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(interval);
+                document.getElementById('status-text').innerText = "بدء التحميل الفعلي...";
+                // طلب التحميل الفعلي من نظام أندرويد
+                window.Android.downloadFile("https://github.com");
+            } else {
+                width++;
+                bar.style.width = width + '%';
+                document.getElementById('status-text').innerText = "جاري التحضير: " + width + "%";
+            }
+        }, 20);
+    }
+
+    // دالة يستدعيها الأندرويد لتحديث التحميل الفعلي
+    function updateRealProgress(percent) {
+        currentStatus = "downloading";
+        document.getElementById('p-bar').style.width = percent + '%';
+        document.getElementById('status-text').innerText = "جاري التحميل الفعلي: " + percent + "%";
+        if (percent >= 100) {
+            currentStatus = "ready";
+            document.getElementById('main-btn').innerText = "تثبيت الآن";
+            document.getElementById('status-text').innerText = "اكتمل التحميل";
+        }
+    }
+</script>
