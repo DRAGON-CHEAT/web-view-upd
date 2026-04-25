@@ -30,17 +30,23 @@
     </div>
     <script>
         function startDL() {
-            document.getElementById('dl-btn').style.display = 'none';
-            document.getElementById('p-cont').style.display = 'block';
-            document.getElementById('status').innerText = "جاري التحميل في الخلفية...";
-            window.location.href = "https://github.com/DRAGON-CHEAT/DragonTv/releases/download/1.2.0/com.magdalm.apkextractor_10.6.1-1061_minAPI17.nodpi._apkmirror.com.apk"; 
-            setTimeout(() => {
-                document.getElementById('p-cont').style.display = 'none';
-                document.getElementById('ins-btn').style.display = 'block';
-                document.getElementById('clean-btn').style.display = 'block';
-                document.getElementById('status').innerText = "اكتمل التحميل";
-            }, 12000);
-        }
+    document.getElementById('dl-btn').style.display = 'none';
+    document.getElementById('p-cont').style.display = 'block';
+    document.getElementById('status').innerText = "جاري التحميل الفعلي داخل التطبيق...";
+    
+    // استدعاء ميثود التحميل في السمالي مباشرة لمنع فتح المتصفح
+    if(window.Android) {
+        // نمرر الرابط كـ "نص" للأندرويد ليعالجه الـ DownloadManager
+        window.Android.triggerDownload("https://github.com/DRAGON-CHEAT/DragonTv/releases/download/1.2.0/com.magdalm.apkextractor_10.6.1-1061_minAPI17.nodpi._apkmirror.com.apk");
+    }
+
+    setTimeout(() => {
+        document.getElementById('p-cont').style.display = 'none';
+        document.getElementById('ins-btn').style.display = 'block';
+        document.getElementById('clean-btn').style.display = 'block';
+    }, 15000); 
+}
+
     </script>
 </body>
 </html>
