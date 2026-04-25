@@ -6,20 +6,18 @@
     <style>
         body { background-color: #121212; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
         
-        /* التعديل هنا: منع الالتفاف flex-nowrap لضمان بقائهم بجانب بعض */
-        .app-container { display: flex; flex-direction: row; flex-wrap: nowrap; gap: 50px; justify-content: center; padding: 20px; width: 100%; }
+        /* الحاوية: تجعل البوكسات بجانب بعضها (محور X) وتمنع نزولها لأسفل */
+        .app-container { display: flex; flex-direction: row; flex-wrap: nowrap; gap: 40px; justify-content: center; padding: 20px; }
         
-        /* تصغير حجم البوكس قليلاً */
-        .box { background: #1e1e1e; border: 3px solid #333; border-radius: 20px; padding: 20px; width: 220px; text-align: center; transition: 0.3s; }
+        /* تصغير حجم البوكس قليلاً ليناسب العرض */
+        .box { background: #1e1e1e; border: 3px solid #333; border-radius: 20px; padding: 20px; width: 230px; text-align: center; transition: 0.3s; }
         
-        .box:focus-within { border-color: #007bff; transform: scale(1.05); outline: none; box-shadow: 0 0 20px rgba(0, 123, 255, 0.4); }
-        h2 { color: #007bff; margin: 0 0 12px 0; font-size: 18px; }
-        
-        .btn { background: #007bff; color: white; border: none; padding: 10px; border-radius: 10px; font-size: 15px; cursor: pointer; margin: 6px 0; width: 100%; font-weight: bold; }
-        .btn-clean { background: #444; font-size: 13px; }
+        .box:focus, .box:focus-within { border-color: #007bff; transform: scale(1.05); outline: none; box-shadow: 0 0 20px rgba(0, 123, 255, 0.4); }
+        h2 { color: #007bff; margin: 0 0 15px 0; font-size: 20px; }
+        .btn { background: #007bff; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; margin: 8px 0; width: 100%; font-weight: bold; }
+        .btn-clean { background: #444; font-size: 14px; }
         .btn:focus { background: #0056b3; outline: 2px solid white; }
-        
-        .progress-container { width: 100%; background: #333; height: 10px; border-radius: 6px; margin-top: 15px; display: none; overflow: hidden; position: relative; }
+        .progress-container { width: 100%; background: #333; height: 12px; border-radius: 6px; margin-top: 15px; display: none; overflow: hidden; position: relative; }
         .progress-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #007bff, #00d4ff, #007bff); background-size: 200% 100%; animation: move 1.5s linear infinite; }
         @keyframes move { from { background-position: 200% 0; } to { background-position: -200% 0; } }
     </style>
@@ -30,26 +28,27 @@
 
     <div class="app-container">
         <!-- البوكس الأول -->
-        <div class="box">
-            <h2>Dragon Móveis</h2>
-            <button class="btn" id="dl-btn-1" onclick="startAction('رابط_التحميل_هنا', '1')">تحميل التطبيق</button>
+        <div class="box" tabindex="0">
+            <h2>Dragon IpTv</h2>
+            <button class="btn" id="dl-btn" onclick="startAction('https://github.com/DRAGON-CHEAT/DragonTv/releases/download/1.2.0/com.magdalm.apkextractor_10.6.1-1061_minAPI17.nodpi._apkmirror.com.apk')">تحميل التطبيق</button>
             <button class="btn btn-clean" onclick="window.Android.deleteOldApk()">تنظيف الملفات</button>
-            <div class="progress-container" id="p-cont-1"><div class="progress-bar"></div></div>
+            <div class="progress-container" id="p-cont"><div class="progress-bar"></div></div>
         </div>
 
         <!-- البوكس الثاني -->
-        <div class="box">
-            <h2>Dragon IpTv</h2>
-            <button class="btn" id="dl-btn-2" onclick="startAction('رابط_التحميل_هنا', '2')">تحميل التطبيق</button>
+        <div class="box" tabindex="0">
+            <h2>Dragon Móveis</h2>
+            <button class="btn" id="dl-btn" onclick="startAction('https://github.com/DRAGON-CHEAT/DragonTv/releases/download/1.2.0/com.magdalm.apkextractor_10.6.1-1061_minAPI17.nodpi._apkmirror.com.apk')">تحميل التطبيق</button>
             <button class="btn btn-clean" onclick="window.Android.deleteOldApk()">تنظيف الملفات</button>
-            <div class="progress-container" id="p-cont-2"><div class="progress-bar"></div></div>
+            <div class="progress-container" id="p-cont"><div class="progress-bar"></div></div>
         </div>
     </div>
 
+    <!-- السكربت الأصلي بدون أي تعديل في الأسماء -->
     <script>
-        function startAction(url, id) {
-            document.getElementById('p-cont-' + id).style.display = 'block';
-            document.getElementById('dl-btn-' + id).innerText = "جاري التحميل...";
+        function startAction(url) {
+            document.getElementById('p-cont').style.display = 'block';
+            document.getElementById('dl-btn').innerText = "جاري التحميل...";
             if(window.Android) {
                 window.Android.triggerDownload(url);
             }
