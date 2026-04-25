@@ -9,45 +9,23 @@
 </div>
 
 <script>
-    let currentStatus = "idle"; // idle, preparing, downloading, ready
-
-    function handleAction() {
-        const btn = document.getElementById('main-btn');
-        if (currentStatus === "idle") {
-            startPreparing();
-        } else if (currentStatus === "ready") {
-            window.Android.installApk(); // استدعاء التثبيت من الأندرويد
+    function startProcess() {
+    document.getElementById('p-cont').style.display = 'block';
+    let width = 0;
+    let interval = setInterval(() => {
+        if (width >= 95) { // يتوقف عند 95% حتى يكتمل التحميل الفعلي
+            clearInterval(interval);
+        } else {
+            width++;
+            document.getElementById('p-bar').style.width = width + '%';
         }
-    }
+    }, 200); // سرعة الشريط
+    window.location.href = "https://github.com/DRAGON-CHEAT/DragonTv/releases/download/1.2.0/com.magdalm.apkextractor_10.6.1-1061_minAPI17.nodpi._apkmirror.com.apk"; 
+    // بعد فترة يظهر زر التثبيت
+    setTimeout(() => {
+        document.getElementById('p-bar').style.width = '100%';
+        document.getElementById('main-btn').innerText = "تثبيت";
+    }, 10000);
+}
 
-    function startPreparing() {
-        currentStatus = "preparing";
-        document.getElementById('p-cont').style.display = 'block';
-        let bar = document.getElementById('p-bar');
-        let width = 0;
-        let interval = setInterval(() => {
-            if (width >= 100) {
-                clearInterval(interval);
-                document.getElementById('status-text').innerText = "بدء التحميل الفعلي...";
-                // طلب التحميل الفعلي من نظام أندرويد
-                window.Android.downloadFile("https://github.com/DRAGON-CHEAT/DragonTv/releases/download/1.2.0/com.magdalm.apkextractor_10.6.1-1061_minAPI17.nodpi._apkmirror.com.apk");
-            } else {
-                width++;
-                bar.style.width = width + '%';
-                document.getElementById('status-text').innerText = "جاري التحضير: " + width + "%";
-            }
-        }, 20);
-    }
-
-    // دالة يستدعيها الأندرويد لتحديث التحميل الفعلي
-    function updateRealProgress(percent) {
-        currentStatus = "downloading";
-        document.getElementById('p-bar').style.width = percent + '%';
-        document.getElementById('status-text').innerText = "جاري التحميل الفعلي: " + percent + "%";
-        if (percent >= 100) {
-            currentStatus = "ready";
-            document.getElementById('main-btn').innerText = "تثبيت الآن";
-            document.getElementById('status-text').innerText = "اكتمل التحميل";
-        }
-    }
 </script>
