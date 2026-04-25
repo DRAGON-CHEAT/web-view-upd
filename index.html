@@ -4,47 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { background-color: #121212; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .card { background: #1e1e1e; border: 3px solid #333; border-radius: 20px; padding: 30px; width: 85%; max-width: 400px; text-align: center; }
-        .card:focus, button:focus { border-color: #007bff; outline: none; transform: scale(1.05); }
-        .btn { background: #007bff; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 18px; cursor: pointer; margin: 10px; width: 100%; font-weight: bold; }
-        .btn-install { background: #28a745; display: none; }
-        .btn-clean { background: #6c757d; display: none; margin-top: 10px; }
-        .progress-container { width: 100%; background: #333; height: 16px; border-radius: 8px; margin: 20px 0; display: none; overflow: hidden; }
-        .progress-bar { 
-            width: 100%; height: 100%; 
-            background: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent) #007bff;
-            background-size: 40px 40px; animation: move-stripes 1s linear infinite; 
-        }
-        @keyframes move-stripes { from { background-position: 40px 0; } to { background-position: 0 0; } }
+        body { background-color: #121212; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .app-container { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; padding: 20px; }
+        .box { background: #1e1e1e; border: 3px solid #333; border-radius: 20px; padding: 25px; width: 260px; text-align: center; transition: 0.3s; }
+        .box:focus, .box:focus-within { border-color: #007bff; transform: scale(1.05); outline: none; box-shadow: 0 0 20px rgba(0, 123, 255, 0.4); }
+        h2 { color: #007bff; margin: 0 0 15px 0; font-size: 22px; }
+        .btn { background: #007bff; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; margin: 8px 0; width: 100%; font-weight: bold; }
+        .btn-clean { background: #444; font-size: 14px; }
+        .btn:focus { background: #0056b3; outline: 2px solid white; }
+        .progress-container { width: 100%; background: #333; height: 12px; border-radius: 6px; margin-top: 15px; display: none; overflow: hidden; position: relative; }
+        .progress-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #007bff, #00d4ff, #007bff); background-size: 200% 100%; animation: move 1.5s linear infinite; }
+        @keyframes move { from { background-position: 200% 0; } to { background-position: -200% 0; } }
     </style>
 </head>
 <body>
-    <div class="card" tabindex="0">
-        <h2>Dragon Apps</h2>
-        <button class="btn" id="dl-btn" onclick="startDL()">تحميل الآن</button>
-        <div class="progress-container" id="p-cont"><div class="progress-bar"></div></div>
-        <button class="btn btn-install" id="ins-btn" onclick="window.Android.installApk()">تثبيت الآن</button>
-        <button class="btn btn-clean" id="clean-btn" onclick="window.Android.deleteOldApk()">تنظيف الملفات</button>
-        <p id="status" style="color:#aaa;">جاهز للتحميل الداخلي</p>
+
+    <h1 style="margin-bottom: 20px; border-bottom: 2px solid #007bff;">DRAGON TV STORE</h1>
+
+    <div class="app-container">
+        <!-- البوكس الأول -->
+        <div class="box" tabindex="0">
+            <h2>Dragon TV App</h2>
+            <button class="btn" id="dl-btn" onclick="startAction('https://github.com/DRAGON-CHEAT/DragonTv/releases/download/1.2.0/com.magdalm.apkextractor_10.6.1-1061_minAPI17.nodpi._apkmirror.com.apk')">تحميل التطبيق</button>
+            <button class="btn btn-clean" onclick="window.Android.deleteOldApk()">تنظيف الملفات</button>
+            <div class="progress-container" id="p-cont"><div class="progress-bar"></div></div>
+        </div>
     </div>
+
     <script>
-        function startDL() {
-            document.getElementById('dl-btn').style.display = 'none';
+        function startAction(url) {
             document.getElementById('p-cont').style.display = 'block';
-            document.getElementById('status').innerText = "جاري التحميل في الخلفية...";
-            
-            // إرسال الرابط للأندرويد مباشرة لتجنب كروم
+            document.getElementById('dl-btn').innerText = "جاري التحميل...";
             if(window.Android) {
-                window.Android.triggerDownload("https://github.com/DRAGON-CHEAT/DragonTv/releases/download/1.2.0/com.magdalm.apkextractor_10.6.1-1061_minAPI17.nodpi._apkmirror.com.apk");
+                window.Android.triggerDownload(url);
             }
-            
-            setTimeout(() => {
-                document.getElementById('p-cont').style.display = 'none';
-                document.getElementById('ins-btn').style.display = 'block';
-                document.getElementById('clean-btn').style.display = 'block';
-                document.getElementById('status').innerText = "اكتمل التحميل";
-            }, 12000);
         }
     </script>
 </body>
