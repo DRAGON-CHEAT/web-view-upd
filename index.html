@@ -29,16 +29,16 @@
     <div class="app-container">
         <!-- البوكس الأول -->
         <div class="box" tabindex="0">
-            <h2>Dragon TV App 1</h2>
-            <button class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/DragonTv/releases/download/1.2.0/com.magdalm.apkextractor_10.6.1-1061_minAPI17.nodpi._apkmirror.com.apk')">تحميل التطبيق</button>
+            <h2>DraGon IpTv</h2>
+            <button class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/test/releases/download/1.2/testi.apk')">تحميل التطبيق</button>
             <button class="btn btn-clean" onclick="window.Android.deleteOldApk()">تنظيف الملفات</button>
             <div class="progress-container"><div class="progress-bar"></div></div>
         </div>
 
         <!-- البوكس الثاني -->
         <div class="box" tabindex="0">
-            <h2>Dragon TV App 2</h2>
-            <button class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/DragonTv/releases/download/1.2.0/com.magdalm.apkextractor_10.6.1-1061_minAPI17.nodpi._apkmirror.com.apk')">تحميل التطبيق</button>
+            <h2>DraGon Móveis</h2>
+            <button class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/test/releases/download/1.0/testm.apk')">تحميل التطبيق</button>
             <button class="btn btn-clean" onclick="window.Android.deleteOldApk()">تنظيف الملفات</button>
             <div class="progress-container"><div class="progress-bar"></div></div>
         </div>
@@ -51,7 +51,7 @@
             var progressCont = parentBox.querySelector('.progress-container');
             
             if(progressCont) progressCont.style.display = 'block';
-            btnElement.innerText = "جاري التحميل...";
+            btnElement.innerText = "جاري التحميل..";
             
             if(window.Android) {
                 window.Android.triggerDownload(url);
