@@ -6,30 +6,32 @@
     <style>
         body { background-color: #121212; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; position: relative; }
         
-        /* تعديل العنوان والخط ليكونوا أعلى قليلاً */
-        .header-section { margin-top: -40px; text-align: center; margin-bottom: 20px; }
-        h1 { margin: 0; border-bottom: 2px solid #007bff; padding-bottom: 5px; display: inline-block; }
+        /* القسم العلوي */
+        .header-section { margin-top: -50px; text-align: center; margin-bottom: 20px; }
+        h1 { margin: 0; border-bottom: 2px solid #007bff; padding-bottom: 5px; display: inline-block; font-size: 24px; }
 
-        .app-container { display: flex; flex-direction: row; gap: 40px; justify-content: center; padding: 20px; flex-wrap: nowrap; }
+        .app-container { display: flex; flex-direction: row; gap: 30px; justify-content: center; padding: 10px; flex-wrap: nowrap; }
         
-        .box { background: #1e1e1e; border: 3px solid #333; border-radius: 20px; padding: 20px; width: 220px; text-align: center; transition: 0.3s; overflow: hidden; }
+        /* تصغير البوكس قليلاً */
+        .box { background: #1e1e1e; border: 3px solid #333; border-radius: 20px; padding: 0 0 15px 0; width: 190px; text-align: center; transition: 0.3s; overflow: hidden; }
         
         .box:focus, .box:focus-within { border-color: #007bff; transform: scale(1.05); outline: none; box-shadow: 0 0 20px rgba(0, 123, 255, 0.4); }
         
-        /* تنسيق شريط خلفية اسم التطبيق */
-        .title-wrapper { background: rgba(0, 123, 255, 0.2); width: 100%; margin: 0 0 15px 0; padding: 5px 0; border-radius: 5px; }
-        h2 { color: #007bff; margin: 0; font-size: 18px; line-height: 1; }
+        /* شريط خلفية الاسم بعرض البوكس الكامل */
+        .title-wrapper { background: rgba(0, 123, 255, 0.25); width: 100%; padding: 12px 0; margin-bottom: 15px; border-bottom: 1px solid rgba(0, 123, 255, 0.3); }
+        h2 { color: #007bff; margin: 0; font-size: 17px; line-height: 1; }
 
-        .btn { background: #007bff; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; margin: 8px 0; width: 100%; font-weight: bold; }
-        .btn-clean { background: #444; font-size: 14px; }
+        /* تعديل المسافات الداخلية للأزرار بعد تصغير البوكس */
+        .btn-group { padding: 0 15px; }
+        .btn { background: #007bff; color: white; border: none; padding: 10px; border-radius: 10px; font-size: 14px; cursor: pointer; margin: 6px 0; width: 100%; font-weight: bold; }
+        .btn-clean { background: #444; font-size: 13px; }
         .btn:focus { background: #0056b3; outline: 2px solid white; }
         
-        .progress-container { width: 100%; background: #333; height: 20px; border-radius: 10px; margin-top: 15px; display: none; overflow: hidden; position: relative; }
+        .progress-container { width: 90%; background: #333; height: 18px; border-radius: 10px; margin: 15px auto 0 auto; display: none; overflow: hidden; position: relative; }
         .progress-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #007bff, #00d4ff, #007bff); background-size: 200% 100%; animation: move 1.5s linear infinite; }
-        .timer-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; font-weight: bold; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); z-index: 2; pointer-events: none; }
+        .timer-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 11px; font-weight: bold; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); z-index: 2; }
         
-        /* تذييل الصفحة */
-        .footer { position: absolute; bottom: 15px; text-align: center; width: 100%; color: #666; font-size: 12px; letter-spacing: 1px; }
+        .footer { position: absolute; bottom: 15px; text-align: center; width: 100%; color: #666; font-size: 12px; letter-spacing: 1px; font-weight: bold; }
 
         @keyframes move { from { background-position: 200% 0; } to { background-position: -200% 0; } }
     </style>
@@ -46,11 +48,13 @@
             <div class="title-wrapper">
                 <h2>DraGon IpTv</h2>
             </div>
-            <button class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/test/releases/download/1.0/x1.apk')">تحميل التطبيق</button>
-            <button class="btn btn-clean" onclick="window.Android.deleteOldApk()">تنظيف الكاش</button>
-            <div class="progress-container">
-                <div class="timer-text">00:00.0</div>
-                <div class="progress-bar"></div>
+            <div class="btn-group">
+                <button class="btn" onclick="startAction(this, 'https://github.com')">تحميل التطبيق</button>
+                <button class="btn btn-clean" onclick="window.Android.deleteOldApk()">تنظيف الكاش</button>
+                <div class="progress-container">
+                    <div class="timer-text">00:00.0</div>
+                    <div class="progress-bar"></div>
+                </div>
             </div>
         </div>
 
@@ -59,23 +63,25 @@
             <div class="title-wrapper">
                 <h2>DraGon Móveis</h2>
             </div>
-            <button class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/test/releases/download/1.0/testm.apk')">تحميل التطبيق</button>
-            <button class="btn btn-clean" onclick="window.Android.deleteOldApk()">تنظيف الكاش</button>
-            <div class="progress-container">
-                <div class="timer-text">00:00.0</div>
-                <div class="progress-bar"></div>
+            <div class="btn-group">
+                <button class="btn" onclick="startAction(this, 'https://github.com')">تحميل التطبيق</button>
+                <button class="btn btn-clean" onclick="window.Android.deleteOldApk()">تنظيف الكاش</button>
+                <div class="progress-container">
+                    <div class="timer-text">00:00.0</div>
+                    <div class="progress-bar"></div>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="footer">
-        Build by DraGon Apps™ - 2026
+        Build by DraGon Apps™_2026
     </div>
 
     <script>
         let timerIntervals = new Map();
         function startAction(btnElement, url) {
-            var parentBox = btnElement.parentElement;
+            var parentBox = btnElement.closest('.box');
             var progressCont = parentBox.querySelector('.progress-container');
             var timerDisplay = parentBox.querySelector('.timer-text');
             
