@@ -4,58 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { background-color: #121212; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        body { background-color: #121212; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; position: relative; }
         
-        /* جعل البوكسات بجانب بعضها ومسافة مناسبة */
+        /* تعديل العنوان والخط ليكونوا أعلى قليلاً */
+        .header-section { margin-top: -40px; text-align: center; margin-bottom: 20px; }
+        h1 { margin: 0; border-bottom: 2px solid #007bff; padding-bottom: 5px; display: inline-block; }
+
         .app-container { display: flex; flex-direction: row; gap: 40px; justify-content: center; padding: 20px; flex-wrap: nowrap; }
         
-        /* تصغير حجم البوكس قليلاً */
-        .box { background: #1e1e1e; border: 3px solid #333; border-radius: 20px; padding: 20px; width: 220px; text-align: center; transition: 0.3s; }
+        .box { background: #1e1e1e; border: 3px solid #333; border-radius: 20px; padding: 20px; width: 220px; text-align: center; transition: 0.3s; overflow: hidden; }
         
         .box:focus, .box:focus-within { border-color: #007bff; transform: scale(1.05); outline: none; box-shadow: 0 0 20px rgba(0, 123, 255, 0.4); }
-        h2 { color: #007bff; margin: 0 0 15px 0; font-size: 18px; }
+        
+        /* تنسيق شريط خلفية اسم التطبيق */
+        .title-wrapper { background: rgba(0, 123, 255, 0.2); width: 100%; margin: 0 0 15px 0; padding: 5px 0; border-radius: 5px; }
+        h2 { color: #007bff; margin: 0; font-size: 18px; line-height: 1; }
+
         .btn { background: #007bff; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; margin: 8px 0; width: 100%; font-weight: bold; }
         .btn-clean { background: #444; font-size: 14px; }
         .btn:focus { background: #0056b3; outline: 2px solid white; }
-        .progress-container { width: 100%; background: #333; height: 12px; border-radius: 6px; margin-top: 15px; display: none; overflow: hidden; position: relative; }
+        
+        .progress-container { width: 100%; background: #333; height: 20px; border-radius: 10px; margin-top: 15px; display: none; overflow: hidden; position: relative; }
         .progress-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #007bff, #00d4ff, #007bff); background-size: 200% 100%; animation: move 1.5s linear infinite; }
+        .timer-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; font-weight: bold; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); z-index: 2; pointer-events: none; }
+        
+        /* تذييل الصفحة */
+        .footer { position: absolute; bottom: 15px; text-align: center; width: 100%; color: #666; font-size: 12px; letter-spacing: 1px; }
+
         @keyframes move { from { background-position: 200% 0; } to { background-position: -200% 0; } }
     </style>
 </head>
 <body>
 
-    <h1 style="margin-bottom: 20px; border-bottom: 2px solid #007bff;">DRAGON TV STORE</h1>
+    <div class="header-section">
+        <h1>DRAGON TV STORE</h1>
+    </div>
 
     <div class="app-container">
         <!-- البوكس الأول -->
-        <div class="box" tabindex="0">
-            <h2>DraGon IpTv</h2>
+        <div class="box" tabindex="0" onfocus="resetBox(this)">
+            <div class="title-wrapper">
+                <h2>DraGon IpTv</h2>
+            </div>
             <button class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/test/releases/download/1.0/x1.apk')">تحميل التطبيق</button>
             <button class="btn btn-clean" onclick="window.Android.deleteOldApk()">تنظيف الكاش</button>
-            <div class="progress-container"><div class="progress-bar"></div></div>
+            <div class="progress-container">
+                <div class="timer-text">00:00.0</div>
+                <div class="progress-bar"></div>
+            </div>
         </div>
 
         <!-- البوكس الثاني -->
-        <div class="box" tabindex="0">
-            <h2>DraGon Móveis</h2>
+        <div class="box" tabindex="0" onfocus="resetBox(this)">
+            <div class="title-wrapper">
+                <h2>DraGon Móveis</h2>
+            </div>
             <button class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/test/releases/download/1.0/testm.apk')">تحميل التطبيق</button>
             <button class="btn btn-clean" onclick="window.Android.deleteOldApk()">تنظيف الكاش</button>
-            <div class="progress-container"><div class="progress-bar"></div></div>
+            <div class="progress-container">
+                <div class="timer-text">00:00.0</div>
+                <div class="progress-bar"></div>
+            </div>
         </div>
     </div>
 
+    <div class="footer">
+        Build by DraGon Apps™ - 2026
+    </div>
+
     <script>
+        let timerIntervals = new Map();
         function startAction(btnElement, url) {
-            // البحث عن حاوية التحميل داخل البوكس الذي تم ضغط زره فقط
             var parentBox = btnElement.parentElement;
             var progressCont = parentBox.querySelector('.progress-container');
+            var timerDisplay = parentBox.querySelector('.timer-text');
             
-            if(progressCont) progressCont.style.display = 'block';
-            btnElement.innerText = "جاري التحميل..";
+            if (timerIntervals.has(parentBox)) {
+                clearInterval(timerIntervals.get(parentBox));
+            }
+            progressCont.style.display = 'block';
+            btnElement.innerText = "إعادة التحميل !";
             
+            let startTime = Date.now();
+            let interval = setInterval(() => {
+                let elapsedTime = Date.now() - startTime;
+                let minutes = Math.floor(elapsedTime / 60000);
+                let seconds = Math.floor((elapsedTime % 60000) / 1000);
+                let deciseconds = Math.floor((elapsedTime % 1000) / 100);
+                
+                timerDisplay.innerText = 
+                    (minutes < 10 ? "0" : "") + minutes + ":" + 
+                    (seconds < 10 ? "0" : "") + seconds + "." + 
+                    deciseconds;
+            }, 100);
+            
+            timerIntervals.set(parentBox, interval);
             if(window.Android) {
                 window.Android.triggerDownload(url);
             }
+        }
+
+        function resetBox(boxElement) {
+            document.querySelectorAll('.box').forEach(box => {
+                if (box !== boxElement) {
+                    let progressCont = box.querySelector('.progress-container');
+                    let btn = box.querySelector('.btn');
+                    let timerDisplay = box.querySelector('.timer-text');
+                    
+                    if(progressCont) progressCont.style.display = 'none';
+                    if(btn && btn.innerText === "إعادة التحميل !") btn.innerText = "تحميل التطبيق";
+                    
+                    if (timerIntervals.has(box)) {
+                        clearInterval(timerIntervals.get(box));
+                        timerIntervals.delete(box);
+                    }
+                    if(timerDisplay) timerDisplay.innerText = "00:00.0";
+                }
+            });
         }
     </script>
 </body>
