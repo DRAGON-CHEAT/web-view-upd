@@ -293,6 +293,9 @@
 
         /* تلفاز: شبكة كما كانت — لا تتأثر بإعدادات الموبايل */
         @media (min-width: 901px) {
+            body {
+                height: 100vh;
+            }
             .cards-grid {
                 display: grid;
                 grid-template-columns: repeat(var(--card-cols), minmax(0, 1fr));
@@ -307,6 +310,10 @@
                 min-width: 0;
                 max-width: none;
                 scroll-snap-align: unset;
+            }
+            .box:focus,
+            .box:focus-within {
+                transform: none;
             }
         }
 
@@ -461,8 +468,8 @@
         <div class="top-bar">
             <h1 class="brand">DRAGON SHOW</h1>
             <div class="filters">
-                <button type="button" class="filter-btn apps" tabindex="0">Apps</button>
-                <button type="button" class="filter-btn game" tabindex="0">Game</button>
+                <button type="button" class="filter-btn apps" tabindex="0" data-tv-skip="1">Apps</button>
+                <button type="button" class="filter-btn game" tabindex="0" data-tv-skip="1">Game</button>
             </div>
         </div>
         <div class="top-glow-down" aria-hidden="true"></div>
@@ -651,6 +658,135 @@
     <script>
         let timerIntervals = new Map();
 
+        function isMobileView() {
+            return window.matchMedia("(max-width: 900px)").matches;
+        }
+
+        function scrollFocusIntoView(el) {
+            if (!el) return;
+            if (isMobileView()) {
+                el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                return;
+            }
+            var root = document.querySelector(".main-scroll");
+            if (!root) {
+                el.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+                return;
+            }
+            var pad = 20;
+            var er = el.getBoundingClientRect();
+            var sr = root.getBoundingClientRect();
+            if (er.top < sr.top + pad) {
+                root.scrollTop -= (sr.top + pad - er.top);
+            } else if (er.bottom > sr.bottom - pad) {
+                root.scrollTop += (er.bottom - sr.bottom + pad);
+            }
+        }
+
+        function applyTvFocusMode() {
+            document.querySelectorAll("[data-tv-skip]").forEach(function (btn) {
+                btn.tabIndex = isMobileView() ? 0 : -1;
+            });
+        }
+
+        function boxCenter(el) {
+            var r = el.getBoundingClientRect();
+            return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        }
+
+        function getFocusBox() {
+            var el = document.activeElement;
+            if (!el) return null;
+            return el.classList.contains("box") ? el : el.closest(".box");
+        }
+
+        function moveBoxFocus(direction) {
+            var current = getFocusBox();
+            if (!current) return false;
+            var boxes = Array.prototype.slice.call(document.querySelectorAll(".cards-grid .box"));
+            var cc = boxCenter(current);
+            var best = null;
+            var bestScore = Infinity;
+
+            boxes.forEach(function (box) {
+                if (box === current) return;
+                var bc = boxCenter(box);
+                var dx = bc.x - cc.x;
+                var dy = bc.y - cc.y;
+                var ok = false;
+                if (direction === "left" && dx < -24) ok = true;
+                if (direction === "right" && dx > 24) ok = true;
+                if (direction === "up" && dy < -24) ok = true;
+                if (direction === "down" && dy > 24) ok = true;
+                if (!ok) return;
+                var primary = (direction === "left" || direction === "right") ? Math.abs(dx) : Math.abs(dy);
+                var secondary = (direction === "left" || direction === "right") ? Math.abs(dy) : Math.abs(dx);
+                var score = primary + secondary * 1.5;
+                if (score < bestScore) {
+                    bestScore = score;
+                    best = box;
+                }
+            });
+
+            if (best) {
+                best.focus();
+                scrollFocusIntoView(best);
+                return true;
+            }
+            return false;
+        }
+
+        function handleTvKeydown(e) {
+            if (isMobileView()) return;
+            var dirMap = {
+                ArrowLeft: "left",
+                ArrowRight: "right",
+                ArrowUp: "up",
+                ArrowDown: "down"
+            };
+            var dir = dirMap[e.key];
+            if (!dir) return;
+
+            var active = document.activeElement;
+            var box = getFocusBox();
+            if (!box) return;
+
+            if (active.classList.contains("btn")) {
+                var btns = Array.prototype.slice.call(box.querySelectorAll(".btn"));
+                var btnIndex = btns.indexOf(active);
+                if (dir === "down" && btnIndex < btns.length - 1) {
+                    btns[btnIndex + 1].focus();
+                    scrollFocusIntoView(box);
+                    e.preventDefault();
+                    return;
+                }
+                if (dir === "up" && btnIndex > 0) {
+                    btns[btnIndex - 1].focus();
+                    scrollFocusIntoView(box);
+                    e.preventDefault();
+                    return;
+                }
+                if (dir === "up" && btnIndex === 0) {
+                    box.focus();
+                    scrollFocusIntoView(box);
+                    e.preventDefault();
+                    return;
+                }
+            } else if (active.classList.contains("box") && dir === "down") {
+                var firstBtn = box.querySelector(".btn");
+                if (firstBtn) {
+                    firstBtn.focus();
+                    scrollFocusIntoView(box);
+                    e.preventDefault();
+                    return;
+                }
+            }
+
+            if (moveBoxFocus(dir)) {
+                e.preventDefault();
+            }
+        }
+
         function startAction(btnElement, url) {
             var parentBox = btnElement.closest(".box");
             var progressCont = parentBox.querySelector(".progress-container");
@@ -701,14 +837,30 @@
 
             if (window.matchMedia("(max-width: 900px)").matches) {
                 boxElement.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+            } else {
+                scrollFocusIntoView(boxElement);
             }
         }
 
+        applyTvFocusMode();
+        window.addEventListener("resize", applyTvFocusMode);
+        document.addEventListener("keydown", handleTvKeydown);
+        window.addEventListener("load", function () {
+            if (!isMobileView()) {
+                var firstBox = document.querySelector(".cards-grid .box");
+                if (firstBox) firstBox.focus();
+            }
+        });
+
         document.querySelectorAll(".box").forEach(function (box) {
             box.addEventListener("focus", function () {
-                if (window.matchMedia("(max-width: 900px)").matches) {
-                    box.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-                }
+                scrollFocusIntoView(box);
+            });
+        });
+
+        document.querySelectorAll(".btn").forEach(function (btn) {
+            btn.addEventListener("focus", function () {
+                scrollFocusIntoView(btn.closest(".box") || btn);
             });
         });
 
