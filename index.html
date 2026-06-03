@@ -102,6 +102,16 @@
 
         .filter-btn.apps { background: #007bff; }
         .filter-btn.game { background: #28a745; }
+        .filter-btn.apps.is-active {
+            box-shadow:
+                inset 0 0 0 2px #fff,
+                0 0 14px rgba(255, 215, 0, 0.55);
+        }
+        .filter-btn.game.is-active {
+            box-shadow:
+                inset 0 0 0 2px #fff,
+                0 0 14px rgba(40, 167, 69, 0.65);
+        }
         .filter-btn:focus {
             outline: none;
             box-shadow: 0 0 0 2px #fff, 0 0 10px rgba(0, 180, 255, 0.45);
@@ -123,6 +133,14 @@
             min-height: min-content;
             align-items: stretch;
             padding: 0 16px;
+        }
+
+        .content-group {
+            display: none;
+        }
+
+        .content-group.is-active {
+            display: block;
         }
 
         .section {
@@ -291,6 +309,50 @@
             to { background-position: -200% 0; }
         }
 
+        /* مجموعة Game — نفس ألوان زر Game (#28a745) */
+        #group-game .section-divider {
+            background: linear-gradient(180deg, transparent 0%, transparent 6%, rgba(40, 167, 69, 0.55) 18%, rgba(40, 167, 69, 0.55) 82%, transparent 100%);
+        }
+
+        #group-game .section-title {
+            color: #7dff9a;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(15, 55, 28, 0.35) 5%,
+                rgba(20, 75, 38, 0.62) 22%,
+                rgba(20, 75, 38, 0.62) 78%,
+                rgba(15, 55, 28, 0.35) 95%,
+                transparent 100%);
+        }
+
+        #group-game .title-wrapper {
+            border-bottom-color: rgba(40, 167, 69, 0.35);
+        }
+
+        #group-game .title-wrapper h2 {
+            color: #5dd879;
+        }
+
+        #group-game .box:focus,
+        #group-game .box:focus-within,
+        #group-game .box.tv-inside {
+            border-color: #28a745;
+            box-shadow: 0 0 18px rgba(40, 167, 69, 0.4);
+        }
+
+        #group-game .btn:not(.btn-clean) {
+            background: #28a745;
+        }
+
+        #group-game .btn:not(.btn-clean):focus {
+            background: #1e7e34;
+        }
+
+        #group-game .progress-bar {
+            background: linear-gradient(90deg, #28a745, #5dd879, #28a745);
+            background-size: 200% 100%;
+        }
+
         /* تلفاز: شبكة كما كانت — لا تتأثر بإعدادات الموبايل */
         @media (min-width: 901px) {
             body {
@@ -384,6 +446,9 @@
                 height: 2px;
                 margin: 8px 20px;
                 background: linear-gradient(90deg, transparent, rgba(0, 220, 255, 0.5), transparent);
+            }
+            #group-game .section-divider {
+                background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.5), transparent);
             }
             :root {
                 --section-pad-x: 0;
@@ -492,14 +557,15 @@
         <div class="top-bar">
             <h1 class="brand">DRAGON SHOW</h1>
             <div class="filters">
-                <button type="button" class="filter-btn apps" tabindex="0">Apps</button>
-                <button type="button" class="filter-btn game" tabindex="0">Game</button>
+                <button type="button" class="filter-btn apps is-active" data-group="apps" tabindex="0">Apps</button>
+                <button type="button" class="filter-btn game" data-group="game" tabindex="0">Game</button>
             </div>
         </div>
         <div class="top-glow-down" aria-hidden="true"></div>
     </header>
 
     <div class="main-scroll">
+        <div id="group-apps" class="content-group is-active" data-group="apps">
         <div class="columns">
             <section class="section" aria-label="For Android">
                 <div class="section-head">
@@ -675,6 +741,9 @@
                 </div>
             </section>
         </div>
+        </div>
+
+        <div id="group-game" class="content-group" data-group="game"></div>
 
         <div class="footer">Build by DraGon Apps™_2026</div>
     </div>
@@ -683,6 +752,7 @@
         let timerIntervals = new Map();
         let tvInsideBox = false;
         let tvActiveBox = null;
+        let activeGroupName = "apps";
 
         function isMobileView() {
             return window.matchMedia("(max-width: 900px)").matches;
@@ -714,6 +784,62 @@
             updateTvSectionHeads();
         }
 
+        function getActiveGroup() {
+            return document.querySelector(".content-group.is-active");
+        }
+
+        function getGroupByName(name) {
+            return document.querySelector('.content-group[data-group="' + name + '"]');
+        }
+
+        function updateGroupFocusability() {
+            document.querySelectorAll(".content-group").forEach(function (group) {
+                var isActive = group.classList.contains("is-active");
+                group.querySelectorAll(".box").forEach(function (box) {
+                    box.tabIndex = isActive ? 0 : -1;
+                });
+            });
+        }
+
+        function switchGroup(name) {
+            if (activeGroupName !== name) {
+                activeGroupName = name;
+                if (tvInsideBox) exitTvBox();
+
+                document.querySelectorAll(".content-group").forEach(function (group) {
+                    group.classList.toggle("is-active", group.dataset.group === name);
+                });
+
+                document.querySelectorAll(".filter-btn").forEach(function (btn) {
+                    btn.classList.toggle("is-active", btn.dataset.group === name);
+                });
+
+                var mainScroll = document.querySelector(".main-scroll");
+                if (mainScroll) mainScroll.scrollTop = 0;
+            }
+
+            updateGroupFocusability();
+            setupTvFocusables();
+            updateTvSectionHeads();
+        }
+
+        function activateGroupFromFilter(btn) {
+            if (!btn || !btn.dataset.group) return;
+            switchGroup(btn.dataset.group);
+        }
+
+        function initGameGroup() {
+            var appsGroup = document.getElementById("group-apps");
+            var gameGroup = document.getElementById("group-game");
+            if (!appsGroup || !gameGroup || gameGroup.children.length > 0) return;
+
+            gameGroup.innerHTML = appsGroup.innerHTML;
+
+            gameGroup.querySelectorAll(".box").forEach(function (box) {
+                box.tabIndex = -1;
+            });
+        }
+
         function updateTvSectionHeads() {
             if (!isTvView()) {
                 document.querySelectorAll(".section-head").forEach(function (head) {
@@ -724,7 +850,9 @@
             var root = document.querySelector(".main-scroll");
             if (!root) return;
             var rootTop = root.getBoundingClientRect().top;
-            document.querySelectorAll(".section").forEach(function (section) {
+            var activeGroup = getActiveGroup();
+            if (!activeGroup) return;
+            activeGroup.querySelectorAll(".section").forEach(function (section) {
                 var head = section.querySelector(".section-head");
                 var firstBox = section.querySelector(".box");
                 if (!head || !firstBox) return;
@@ -755,7 +883,10 @@
 
         function getTvBoxLevelTargets() {
             var filters = Array.prototype.slice.call(document.querySelectorAll(".filter-btn"));
-            var boxes = Array.prototype.slice.call(document.querySelectorAll(".cards-grid .box"));
+            var group = getActiveGroup();
+            var boxes = group
+                ? Array.prototype.slice.call(group.querySelectorAll(".cards-grid .box"))
+                : [];
             return filters.concat(boxes);
         }
 
@@ -839,6 +970,14 @@
 
             if (isEnterKey(e) && !tvInsideBox) {
                 var active = document.activeElement;
+                if (active && active.classList.contains("filter-btn")) {
+                    activateGroupFromFilter(active);
+                    var group = getActiveGroup();
+                    var firstBox = group ? group.querySelector(".cards-grid .box") : null;
+                    if (firstBox) firstBox.focus();
+                    e.preventDefault();
+                    return;
+                }
                 if (active && active.classList.contains("box")) {
                     enterTvBox(active);
                     e.preventDefault();
@@ -954,6 +1093,18 @@
         }
 
         setupTvFocusables();
+        initGameGroup();
+        updateGroupFocusability();
+
+        document.querySelectorAll(".filter-btn").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                activateGroupFromFilter(btn);
+            });
+            btn.addEventListener("focus", function () {
+                if (isTvView()) scrollFocusIntoView(btn);
+            });
+        });
+
         window.addEventListener("resize", function () {
             if (tvInsideBox && !isTvView()) {
                 tvInsideBox = false;
@@ -973,28 +1124,27 @@
         }
 
         window.addEventListener("load", function () {
+            initGameGroup();
             setupTvFocusables();
+            updateGroupFocusability();
             updateTvSectionHeads();
             if (isTvView()) {
-                var firstBox = document.querySelector(".cards-grid .box");
+                var firstBox = getActiveGroup();
+                firstBox = firstBox ? firstBox.querySelector(".cards-grid .box") : null;
                 if (firstBox) firstBox.focus();
             }
         });
 
-        document.querySelectorAll(".box").forEach(function (box) {
-            box.addEventListener("focus", function () {
-                if (isTvView() && !tvInsideBox) {
-                    scrollFocusIntoView(box);
-                } else if (isMobileView()) {
-                    scrollFocusIntoView(box);
-                }
-            });
-        });
-
-        document.querySelectorAll(".filter-btn").forEach(function (btn) {
-            btn.addEventListener("focus", function () {
-                if (isTvView()) scrollFocusIntoView(btn);
-            });
+        document.querySelector(".main-scroll").addEventListener("focusin", function (e) {
+            var box = e.target.closest ? e.target.closest(".box") : null;
+            if (!box) return;
+            var group = box.closest(".content-group");
+            if (!group || !group.classList.contains("is-active")) return;
+            if (isTvView() && !tvInsideBox) {
+                scrollFocusIntoView(box);
+            } else if (isMobileView()) {
+                scrollFocusIntoView(box);
+            }
         });
 
         document.querySelectorAll(".cards-grid").forEach(function (grid) {
