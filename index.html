@@ -3,128 +3,515 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRAGON SHOW</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #121212; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; position: relative; }
-        
-        /* القسم العلوي */
-        .header-section { margin-top: -50px; text-align: center; margin-bottom: 20px; }
-        h1 { margin: 0; border-bottom: 2px solid #007bff; padding-bottom: 5px; display: inline-block; font-size: 24px; }
+        * { box-sizing: border-box; }
 
-        .app-container { display: flex; flex-direction: row; gap: 30px; justify-content: center; padding: 10px; flex-wrap: nowrap; }
-        
-        /* تصغير البوكس قليلاً */
-        .box { background: #1e1e1e; border: 3px solid #333; border-radius: 20px; padding: 0 0 15px 0; width: 190px; text-align: center; transition: 0.3s; overflow: hidden; }
-        
-        .box:focus, .box:focus-within { border-color: #007bff; transform: scale(1.05); outline: none; box-shadow: 0 0 20px rgba(0, 123, 255, 0.4); }
-        
-        /* شريط خلفية الاسم بعرض البوكس الكامل */
-        .title-wrapper { background: rgba(0, 123, 255, 0.25); width: 100%; padding: 12px 0; margin-bottom: 15px; border-bottom: 1px solid rgba(0, 123, 255, 0.3); }
-        h2 { color: #007bff; margin: 0; font-size: 17px; line-height: 1; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: #fff;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: #0a1628 url("dragon_bg.png") center center / cover no-repeat fixed;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-        /* تعديل المسافات الداخلية للأزرار بعد تصغير البوكس */
-        .btn-group { padding: 0 15px; }
-        .btn { background: #007bff; color: white; border: none; padding: 10px; border-radius: 10px; font-size: 14px; cursor: pointer; margin: 6px 0; width: 100%; font-weight: bold; }
-        .btn-clean { background: #444; font-size: 13px; }
-        .btn:focus { background: #0056b3; outline: 2px solid white; }
-        
-        .progress-container { width: 90%; background: #333; height: 18px; border-radius: 10px; margin: 15px auto 0 auto; display: none; overflow: hidden; position: relative; }
-        .progress-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #007bff, #00d4ff, #007bff); background-size: 200% 100%; animation: move 1.5s linear infinite; }
-        .timer-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 11px; font-weight: bold; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); z-index: 2; }
-        
-        .footer { position: absolute; bottom: 15px; text-align: center; width: 100%; color: #666; font-size: 12px; letter-spacing: 1px; font-weight: bold; }
+        .top-header {
+            flex-shrink: 0;
+            position: relative;
+        }
 
-        @keyframes move { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+        .top-bar {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 24px 8px;
+            background:
+                linear-gradient(180deg,
+                    rgba(0, 110, 130, 0.55) 0%,
+                    rgba(0, 65, 85, 0.72) 45%,
+                    rgba(8, 35, 52, 0.88) 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(120, 240, 255, 0.35),
+                inset 0 -4px 14px rgba(0, 180, 210, 0.1),
+                0 2px 12px rgba(0, 0, 0, 0.35);
+        }
+
+        .top-glow-down {
+            position: relative;
+            height: 22px;
+            pointer-events: none;
+            background: linear-gradient(180deg,
+                rgba(120, 248, 255, 0.45) 0%,
+                rgba(0, 229, 255, 0.2) 22%,
+                rgba(0, 200, 230, 0.07) 55%,
+                transparent 100%);
+        }
+
+        .top-glow-down::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 2px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(125, 244, 255, 0.4) 8%,
+                #7df4ff 22%,
+                #00e5ff 50%,
+                #7df4ff 78%,
+                rgba(125, 244, 255, 0.4) 92%,
+                transparent 100%);
+            box-shadow:
+                0 0 8px rgba(125, 244, 255, 1),
+                0 0 16px rgba(0, 229, 255, 0.75),
+                0 0 28px rgba(0, 229, 255, 0.35),
+                0 2px 10px rgba(0, 229, 255, 0.25);
+        }
+
+        .brand {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+        }
+
+        .filter-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 7px 22px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .filter-btn.apps { background: #007bff; }
+        .filter-btn.game { background: #28a745; }
+        .filter-btn:focus { outline: 2px solid #fff; outline-offset: 2px; }
+
+        .main-scroll {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 4px 16px 70px;
+            scroll-behavior: smooth;
+        }
+
+        .columns {
+            display: flex;
+            gap: 0;
+            min-height: min-content;
+            align-items: stretch;
+        }
+
+        .section {
+            flex: 1;
+            min-width: 0;
+            padding: 12px var(--section-pad-x) 20px;
+        }
+
+        .section-divider {
+            width: 2px;
+            flex-shrink: 0;
+            align-self: stretch;
+            background: linear-gradient(180deg, transparent 0%, transparent 6%, rgba(0, 220, 255, 0.55) 18%, rgba(0, 220, 255, 0.55) 82%, transparent 100%);
+            margin: 34px 0 20px;
+        }
+
+        .section-title {
+            display: inline-block;
+            margin: 0;
+            padding: 4px 42px 6px;
+            text-align: center;
+            font-family: "Orbitron", "Arial Black", sans-serif;
+            font-size: var(--section-title-size);
+            font-weight: 800;
+            color: #ffd700;
+            letter-spacing: 1.5px;
+            text-transform: none;
+            line-height: 1.2;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(0, 75, 95, 0.35) 5%,
+                rgba(0, 95, 115, 0.62) 22%,
+                rgba(0, 95, 115, 0.62) 78%,
+                rgba(0, 75, 95, 0.35) 95%,
+                transparent 100%);
+        }
+
+        .section-head {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        :root {
+            --card-cols: 3;
+            --card-gap: 14px;
+            --box-pad-y: 12px;
+            --box-pad-x: 10px;
+            --card-title-size: 14px;
+            --btn-size: 12px;
+            --btn-pad-y: 9px;
+            --section-title-size: 20px;
+            --section-pad-x: 14px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(var(--card-cols), minmax(0, 1fr));
+            gap: var(--card-gap);
+        }
+
+        .box {
+            background: rgba(18, 28, 42, 0.92);
+            border: 2px solid rgba(255, 255, 255, 0.12);
+            border-radius: clamp(12px, 1.5vw, 18px);
+            padding: var(--box-pad-y) var(--box-pad-x) calc(var(--box-pad-y) + 2px);
+            text-align: center;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .box:focus,
+        .box:focus-within {
+            border-color: #00b4ff;
+            transform: scale(1.03);
+            outline: none;
+            box-shadow: 0 0 18px rgba(0, 180, 255, 0.35);
+        }
+
+        .title-wrapper {
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 180, 255, 0.25);
+        }
+
+        .title-wrapper h2 {
+            margin: 0;
+            font-size: var(--card-title-size);
+            font-weight: 700;
+            color: #4db8ff;
+            line-height: 1.3;
+        }
+
+        .btn-group { padding: 0 4px; }
+
+        .btn {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: var(--btn-pad-y) 8px;
+            border-radius: 12px;
+            font-size: var(--btn-size);
+            cursor: pointer;
+            margin: 0 0 8px;
+            width: 100%;
+            font-weight: 700;
+        }
+
+        .btn-clean {
+            background: #3a3f47;
+            color: #e8e8e8;
+            font-size: calc(var(--btn-size) - 1px);
+            margin-bottom: 0;
+        }
+
+        .btn:focus {
+            background: #0056b3;
+            outline: 2px solid #fff;
+        }
+
+        .btn-clean:focus { background: #555b65; }
+
+        .progress-container {
+            width: 100%;
+            background: #333;
+            height: 18px;
+            border-radius: 10px;
+            margin: 12px auto 0;
+            display: none;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #007bff, #00d4ff, #007bff);
+            background-size: 200% 100%;
+            animation: move 1.5s linear infinite;
+        }
+
+        .timer-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 11px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            z-index: 2;
+        }
+
+        .footer {
+            flex-shrink: 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            padding: 12px;
+            color: #888;
+            font-size: 12px;
+            letter-spacing: 1px;
+            font-weight: bold;
+            background: linear-gradient(180deg, transparent, rgba(10, 22, 40, 0.95));
+            pointer-events: none;
+        }
+
+        @keyframes move {
+            from { background-position: 200% 0; }
+            to { background-position: -200% 0; }
+        }
+
+        /* تلفاز / شاشات عريضة */
+        @media (min-width: 1024px) and (min-height: 540px) {
+            :root {
+                --card-cols: 3;
+                --card-gap: 16px;
+                --box-pad-y: 14px;
+                --box-pad-x: 12px;
+                --card-title-size: 16px;
+                --btn-size: 13px;
+                --btn-pad-y: 10px;
+                --section-title-size: 22px;
+                --section-pad-x: 16px;
+            }
+        }
+
+        @media (min-width: 1600px) and (min-height: 720px) {
+            :root {
+                --card-gap: 18px;
+                --card-title-size: 17px;
+                --btn-size: 14px;
+                --section-title-size: 24px;
+            }
+        }
+
+        /* تابلت / موبايل أفقي */
+        @media (max-width: 1023px) {
+            :root {
+                --card-cols: 2;
+                --card-gap: 12px;
+                --section-title-size: 18px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .columns { flex-direction: column; }
+            .section-divider {
+                width: auto;
+                height: 2px;
+                margin: 8px 20px;
+                background: linear-gradient(90deg, transparent, rgba(0, 220, 255, 0.5), transparent);
+            }
+            :root {
+                --card-cols: 3;
+                --section-pad-x: 12px;
+            }
+        }
+
+        /* موبايل */
+        @media (max-width: 640px) {
+            :root {
+                --card-cols: 2;
+                --card-gap: 10px;
+                --box-pad-y: 10px;
+                --box-pad-x: 8px;
+                --card-title-size: 13px;
+                --btn-size: 11px;
+                --btn-pad-y: 8px;
+                --section-title-size: 16px;
+            }
+            .brand { font-size: 18px; }
+            .filter-btn { padding: 6px 16px; font-size: 12px; }
+        }
+
+        @media (max-width: 420px) {
+            :root {
+                --card-cols: 1;
+            }
+        }
+
+        /* ارتفاع قصير (موبايل أفقي / شاشات منخفضة) */
+        @media (max-height: 520px) {
+            :root {
+                --card-gap: 8px;
+                --box-pad-y: 8px;
+                --box-pad-x: 8px;
+                --btn-pad-y: 6px;
+                --section-title-size: 15px;
+            }
+            .section-head { margin-bottom: 10px; }
+            .title-wrapper { margin-bottom: 8px; padding-bottom: 6px; }
+            .main-scroll { padding-bottom: 48px; }
+            .top-glow-down { height: 14px; }
+        }
+
+        @media (max-height: 520px) and (min-width: 700px) {
+            :root {
+                --card-cols: 4;
+            }
+        }
+
+        /* تلفاز بعرض كبير وقسمين جنب بعض */
+        @media (min-width: 1024px) and (max-width: 1399px) and (min-height: 540px) {
+            :root {
+                --card-cols: 2;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="header-section">
-        <h1>DRAGON TV STORE</h1>
-    </div>
-
-    <div class="app-container">
-        <!-- البوكس الأول -->
-        <div class="box" tabindex="0" onfocus="resetBox(this)">
-            <div class="title-wrapper">
-                <h2>DraGon IpTv</h2>
-            </div>
-            <div class="btn-group">
-                <button class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/test/releases/download/1.2/DraGon.IpTv_non.apk')">تحميل التطبيق</button>
-                <button class="btn btn-clean" onclick="window.Android.deleteOldApk()">تنظيف الكاش</button>
-                <div class="progress-container">
-                    <div class="timer-text">00:00.0</div>
-                    <div class="progress-bar"></div>
-                </div>
+    <header class="top-header">
+        <div class="top-bar">
+            <h1 class="brand">DRAGON SHOW</h1>
+            <div class="filters">
+                <button type="button" class="filter-btn apps" tabindex="0">Apps</button>
+                <button type="button" class="filter-btn game" tabindex="0">Game</button>
             </div>
         </div>
+        <div class="top-glow-down" aria-hidden="true"></div>
+    </header>
 
-        <!-- البوكس الثاني -->
-        <div class="box" tabindex="0" onfocus="resetBox(this)">
-            <div class="title-wrapper">
-                <h2>DraGon Móveis</h2>
-            </div>
-            <div class="btn-group">
-                <button class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/web-view-upd/releases/download/1.3/Ads+Regex+4.0.apk')">تحميل التطبيق</button>
-                <button class="btn btn-clean" onclick="window.Android.deleteOldApk()">تنظيف الكاش</button>
-                <div class="progress-container">
-                    <div class="timer-text">00:00.0</div>
-                    <div class="progress-bar"></div>
+    <div class="main-scroll">
+        <div class="columns">
+            <section class="section" aria-label="For Android">
+                <div class="section-head">
+                    <h2 class="section-title">For Android</h2>
                 </div>
-            </div>
+                <div class="cards-grid" id="grid-android"></div>
+            </section>
+
+            <div class="section-divider" aria-hidden="true"></div>
+
+            <section class="section" aria-label="For Android Tv">
+                <div class="section-head">
+                    <h2 class="section-title">For Android Tv</h2>
+                </div>
+                <div class="cards-grid" id="grid-android-tv"></div>
+            </section>
         </div>
     </div>
 
-    <div class="footer">
-        Build by DraGon Apps™_2026
-    </div>
+    <div class="footer">Build by DraGon Apps™_2026</div>
 
     <script>
+        var APPS = {
+            android: {
+                title: "DraGon Móveis",
+                url: "https://github.com/DRAGON-CHEAT/web-view-upd/releases/download/1.3/Ads+Regex+4.0.apk"
+            },
+            androidTv: {
+                title: "DraGon IpTv",
+                url: "https://github.com/DRAGON-CHEAT/test/releases/download/1.2/DraGon.IpTv_non.apk"
+            }
+        };
+
+        var CARD_COUNT = 9;
+
         let timerIntervals = new Map();
+
+        function createCard(title, url) {
+            var box = document.createElement("div");
+            box.className = "box";
+            box.tabIndex = 0;
+            box.setAttribute("onfocus", "resetBox(this)");
+            box.innerHTML =
+                '<div class="title-wrapper"><h2>' + title + '</h2></div>' +
+                '<div class="btn-group">' +
+                '<button type="button" class="btn" onclick="startAction(this, \'' + url + '\')">تحميل التطبيق</button>' +
+                '<button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()">الغاء تثبيت</button>' +
+                '<div class="progress-container">' +
+                '<div class="timer-text">00:00.0</div>' +
+                '<div class="progress-bar"></div>' +
+                '</div></div>';
+            box.onfocus = function () { resetBox(box); };
+            return box;
+        }
+
+        function fillGrid(containerId, appKey) {
+            var grid = document.getElementById(containerId);
+            var app = APPS[appKey];
+            for (var i = 0; i < CARD_COUNT; i++) {
+                grid.appendChild(createCard(app.title, app.url));
+            }
+        }
+
+        fillGrid("grid-android", "android");
+        fillGrid("grid-android-tv", "androidTv");
+
         function startAction(btnElement, url) {
-            var parentBox = btnElement.closest('.box');
-            var progressCont = parentBox.querySelector('.progress-container');
-            var timerDisplay = parentBox.querySelector('.timer-text');
-            
+            var parentBox = btnElement.closest(".box");
+            var progressCont = parentBox.querySelector(".progress-container");
+            var timerDisplay = parentBox.querySelector(".timer-text");
+
             if (timerIntervals.has(parentBox)) {
                 clearInterval(timerIntervals.get(parentBox));
             }
-            progressCont.style.display = 'block';
+            progressCont.style.display = "block";
             btnElement.innerText = "إعادة التحميل !";
-            
-            let startTime = Date.now();
-            let interval = setInterval(() => {
-                let elapsedTime = Date.now() - startTime;
-                let minutes = Math.floor(elapsedTime / 60000);
-                let seconds = Math.floor((elapsedTime % 60000) / 1000);
-                let deciseconds = Math.floor((elapsedTime % 1000) / 100);
-                
-                timerDisplay.innerText = 
-                    (minutes < 10 ? "0" : "") + minutes + ":" + 
-                    (seconds < 10 ? "0" : "") + seconds + "." + 
+
+            var startTime = Date.now();
+            var interval = setInterval(function () {
+                var elapsedTime = Date.now() - startTime;
+                var minutes = Math.floor(elapsedTime / 60000);
+                var seconds = Math.floor((elapsedTime % 60000) / 1000);
+                var deciseconds = Math.floor((elapsedTime % 1000) / 100);
+
+                timerDisplay.innerText =
+                    (minutes < 10 ? "0" : "") + minutes + ":" +
+                    (seconds < 10 ? "0" : "") + seconds + "." +
                     deciseconds;
             }, 100);
-            
+
             timerIntervals.set(parentBox, interval);
-            if(window.Android) {
+            if (window.Android) {
                 window.Android.triggerDownload(url);
             }
         }
 
         function resetBox(boxElement) {
-            document.querySelectorAll('.box').forEach(box => {
+            document.querySelectorAll(".box").forEach(function (box) {
                 if (box !== boxElement) {
-                    let progressCont = box.querySelector('.progress-container');
-                    let btn = box.querySelector('.btn');
-                    let timerDisplay = box.querySelector('.timer-text');
-                    
-                    if(progressCont) progressCont.style.display = 'none';
-                    if(btn && btn.innerText === "إعادة التحميل !") btn.innerText = "تحميل التطبيق";
-                    
+                    var progressCont = box.querySelector(".progress-container");
+                    var btn = box.querySelector(".btn");
+                    var timerDisplay = box.querySelector(".timer-text");
+
+                    if (progressCont) progressCont.style.display = "none";
+                    if (btn && btn.innerText === "إعادة التحميل !") btn.innerText = "تحميل التطبيق";
+
                     if (timerIntervals.has(box)) {
                         clearInterval(timerIntervals.get(box));
                         timerIntervals.delete(box);
                     }
-                    if(timerDisplay) timerDisplay.innerText = "00:00.0";
+                    if (timerDisplay) timerDisplay.innerText = "00:00.0";
                 }
             });
         }
