@@ -291,6 +291,25 @@
             to { background-position: -200% 0; }
         }
 
+        /* تلفاز: شبكة كما كانت — لا تتأثر بإعدادات الموبايل */
+        @media (min-width: 901px) {
+            .cards-grid {
+                display: grid;
+                grid-template-columns: repeat(var(--card-cols), minmax(0, 1fr));
+                overflow: visible;
+                flex-direction: unset;
+                flex-wrap: unset;
+                scroll-snap-type: none;
+                padding: 0;
+            }
+            .box {
+                flex: unset;
+                min-width: 0;
+                max-width: none;
+                scroll-snap-align: unset;
+            }
+        }
+
         /* تلفاز / شاشات عريضة */
         @media (min-width: 1024px) and (min-height: 540px) {
             :root {
@@ -469,7 +488,58 @@
                             </div>
                         </div>
                     </div>
-                    <!-- انسخ .box لإضافة تطبيقات أكثر — تمرير أفقي على الموبايل -->
+                    <div class="box" tabindex="0" onfocus="resetBox(this)">
+                        <div class="title-wrapper">
+                            <h2>DraGon Móveis</h2>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/web-view-upd/releases/download/1.3/Ads+Regex+4.0.apk')">تحميل التطبيق</button>
+                            <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
+                            <div class="progress-container">
+                                <div class="timer-text">00:00.0</div>
+                                <div class="progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box" tabindex="0" onfocus="resetBox(this)">
+                        <div class="title-wrapper">
+                            <h2>DraGon Móveis</h2>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/web-view-upd/releases/download/1.3/Ads+Regex+4.0.apk')">تحميل التطبيق</button>
+                            <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
+                            <div class="progress-container">
+                                <div class="timer-text">00:00.0</div>
+                                <div class="progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box" tabindex="0" onfocus="resetBox(this)">
+                        <div class="title-wrapper">
+                            <h2>DraGon Móveis</h2>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/web-view-upd/releases/download/1.3/Ads+Regex+4.0.apk')">تحميل التطبيق</button>
+                            <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
+                            <div class="progress-container">
+                                <div class="timer-text">00:00.0</div>
+                                <div class="progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box" tabindex="0" onfocus="resetBox(this)">
+                        <div class="title-wrapper">
+                            <h2>DraGon Móveis</h2>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/web-view-upd/releases/download/1.3/Ads+Regex+4.0.apk')">تحميل التطبيق</button>
+                            <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
+                            <div class="progress-container">
+                                <div class="timer-text">00:00.0</div>
+                                <div class="progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="box" tabindex="0" onfocus="resetBox(this)">
                         <div class="title-wrapper">
                             <h2>DraGon Móveis</h2>
@@ -493,6 +563,58 @@
                     <h2 class="section-title">For Android Tv</h2>
                 </div>
                 <div class="cards-grid">
+                    <div class="box" tabindex="0" onfocus="resetBox(this)">
+                        <div class="title-wrapper">
+                            <h2>DraGon IpTv</h2>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/test/releases/download/1.2/DraGon.IpTv_non.apk')">تحميل التطبيق</button>
+                            <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
+                            <div class="progress-container">
+                                <div class="timer-text">00:00.0</div>
+                                <div class="progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box" tabindex="0" onfocus="resetBox(this)">
+                        <div class="title-wrapper">
+                            <h2>DraGon IpTv</h2>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/test/releases/download/1.2/DraGon.IpTv_non.apk')">تحميل التطبيق</button>
+                            <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
+                            <div class="progress-container">
+                                <div class="timer-text">00:00.0</div>
+                                <div class="progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box" tabindex="0" onfocus="resetBox(this)">
+                        <div class="title-wrapper">
+                            <h2>DraGon IpTv</h2>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/test/releases/download/1.2/DraGon.IpTv_non.apk')">تحميل التطبيق</button>
+                            <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
+                            <div class="progress-container">
+                                <div class="timer-text">00:00.0</div>
+                                <div class="progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box" tabindex="0" onfocus="resetBox(this)">
+                        <div class="title-wrapper">
+                            <h2>DraGon IpTv</h2>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/test/releases/download/1.2/DraGon.IpTv_non.apk')">تحميل التطبيق</button>
+                            <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
+                            <div class="progress-container">
+                                <div class="timer-text">00:00.0</div>
+                                <div class="progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="box" tabindex="0" onfocus="resetBox(this)">
                         <div class="title-wrapper">
                             <h2>DraGon IpTv</h2>
