@@ -315,6 +315,30 @@
             .box:focus-within {
                 transform: none;
             }
+            .filter-btn {
+                border-radius: 10px;
+            }
+            .filter-btn:focus {
+                outline: none;
+                box-shadow:
+                    inset 0 0 0 2px #fff,
+                    0 0 12px rgba(0, 229, 255, 0.55);
+            }
+            .section-head {
+                transition: opacity 0.25s ease, max-height 0.25s ease, margin-bottom 0.25s ease;
+                max-height: 72px;
+                overflow: hidden;
+            }
+            .section-head.tv-hidden {
+                opacity: 0;
+                max-height: 0;
+                margin-bottom: 0 !important;
+                visibility: hidden;
+            }
+            .box.tv-inside {
+                border-color: #00b4ff;
+                box-shadow: 0 0 18px rgba(0, 180, 255, 0.35);
+            }
         }
 
         /* تلفاز / شاشات عريضة */
@@ -468,8 +492,8 @@
         <div class="top-bar">
             <h1 class="brand">DRAGON SHOW</h1>
             <div class="filters">
-                <button type="button" class="filter-btn apps" tabindex="0" data-tv-skip="1">Apps</button>
-                <button type="button" class="filter-btn game" tabindex="0" data-tv-skip="1">Game</button>
+                <button type="button" class="filter-btn apps" tabindex="0">Apps</button>
+                <button type="button" class="filter-btn game" tabindex="0">Game</button>
             </div>
         </div>
         <div class="top-glow-down" aria-hidden="true"></div>
@@ -657,9 +681,15 @@
 
     <script>
         let timerIntervals = new Map();
+        let tvInsideBox = false;
+        let tvActiveBox = null;
 
         function isMobileView() {
             return window.matchMedia("(max-width: 900px)").matches;
+        }
+
+        function isTvView() {
+            return !isMobileView();
         }
 
         function scrollFocusIntoView(el) {
@@ -681,15 +711,38 @@
             } else if (er.bottom > sr.bottom - pad) {
                 root.scrollTop += (er.bottom - sr.bottom + pad);
             }
+            updateTvSectionHeads();
         }
 
-        function applyTvFocusMode() {
-            document.querySelectorAll("[data-tv-skip]").forEach(function (btn) {
-                btn.tabIndex = isMobileView() ? 0 : -1;
+        function updateTvSectionHeads() {
+            if (!isTvView()) {
+                document.querySelectorAll(".section-head").forEach(function (head) {
+                    head.classList.remove("tv-hidden");
+                });
+                return;
+            }
+            var root = document.querySelector(".main-scroll");
+            if (!root) return;
+            var rootTop = root.getBoundingClientRect().top;
+            document.querySelectorAll(".section").forEach(function (section) {
+                var head = section.querySelector(".section-head");
+                var firstBox = section.querySelector(".box");
+                if (!head || !firstBox) return;
+                if (firstBox.getBoundingClientRect().top <= rootTop + 10) {
+                    head.classList.add("tv-hidden");
+                } else {
+                    head.classList.remove("tv-hidden");
+                }
             });
         }
 
-        function boxCenter(el) {
+        function setupTvFocusables() {
+            document.querySelectorAll(".box .btn").forEach(function (btn) {
+                btn.tabIndex = isTvView() ? -1 : 0;
+            });
+        }
+
+        function elementCenter(el) {
             var r = el.getBoundingClientRect();
             return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
         }
@@ -700,19 +753,23 @@
             return el.classList.contains("box") ? el : el.closest(".box");
         }
 
-        function moveBoxFocus(direction) {
-            var current = getFocusBox();
-            if (!current) return false;
+        function getTvBoxLevelTargets() {
+            var filters = Array.prototype.slice.call(document.querySelectorAll(".filter-btn"));
             var boxes = Array.prototype.slice.call(document.querySelectorAll(".cards-grid .box"));
-            var cc = boxCenter(current);
+            return filters.concat(boxes);
+        }
+
+        function moveSpatialFocus(direction, targets, current) {
+            if (!current) return false;
+            var cc = elementCenter(current);
             var best = null;
             var bestScore = Infinity;
 
-            boxes.forEach(function (box) {
-                if (box === current) return;
-                var bc = boxCenter(box);
-                var dx = bc.x - cc.x;
-                var dy = bc.y - cc.y;
+            targets.forEach(function (el) {
+                if (el === current) return;
+                var ec = elementCenter(el);
+                var dx = ec.x - cc.x;
+                var dy = ec.y - cc.y;
                 var ok = false;
                 if (direction === "left" && dx < -24) ok = true;
                 if (direction === "right" && dx > 24) ok = true;
@@ -724,7 +781,7 @@
                 var score = primary + secondary * 1.5;
                 if (score < bestScore) {
                     bestScore = score;
-                    best = box;
+                    best = el;
                 }
             });
 
@@ -736,8 +793,59 @@
             return false;
         }
 
+        function enterTvBox(box) {
+            if (!box) return;
+            tvInsideBox = true;
+            tvActiveBox = box;
+            box.classList.add("tv-inside");
+            var btns = box.querySelectorAll(".btn");
+            btns.forEach(function (btn) { btn.tabIndex = 0; });
+            var firstBtn = box.querySelector(".btn");
+            if (firstBtn) firstBtn.focus();
+            scrollFocusIntoView(box);
+        }
+
+        function exitTvBox() {
+            if (!tvInsideBox) return;
+            tvInsideBox = false;
+            document.querySelectorAll(".box .btn").forEach(function (btn) {
+                if (isTvView()) btn.tabIndex = -1;
+            });
+            if (tvActiveBox) {
+                tvActiveBox.classList.remove("tv-inside");
+                tvActiveBox.focus();
+                scrollFocusIntoView(tvActiveBox);
+            }
+        }
+
+        function isBackKey(e) {
+            return e.key === "Escape" || e.key === "Backspace" || e.keyCode === 4;
+        }
+
+        function isEnterKey(e) {
+            return e.key === "Enter" || e.keyCode === 13 || e.keyCode === 23;
+        }
+
         function handleTvKeydown(e) {
             if (isMobileView()) return;
+
+            if (isBackKey(e)) {
+                if (tvInsideBox) {
+                    exitTvBox();
+                    e.preventDefault();
+                }
+                return;
+            }
+
+            if (isEnterKey(e) && !tvInsideBox) {
+                var active = document.activeElement;
+                if (active && active.classList.contains("box")) {
+                    enterTvBox(active);
+                    e.preventDefault();
+                    return;
+                }
+            }
+
             var dirMap = {
                 ArrowLeft: "left",
                 ArrowRight: "right",
@@ -747,42 +855,45 @@
             var dir = dirMap[e.key];
             if (!dir) return;
 
-            var active = document.activeElement;
-            var box = getFocusBox();
-            if (!box) return;
+            if (tvInsideBox) {
+                var box = tvActiveBox || getFocusBox();
+                var active = document.activeElement;
+                if (!box) return;
 
-            if (active.classList.contains("btn")) {
-                var btns = Array.prototype.slice.call(box.querySelectorAll(".btn"));
-                var btnIndex = btns.indexOf(active);
-                if (dir === "down" && btnIndex < btns.length - 1) {
-                    btns[btnIndex + 1].focus();
-                    scrollFocusIntoView(box);
+                if (dir === "left" || dir === "right") {
+                    exitTvBox();
                     e.preventDefault();
                     return;
                 }
-                if (dir === "up" && btnIndex > 0) {
-                    btns[btnIndex - 1].focus();
-                    scrollFocusIntoView(box);
-                    e.preventDefault();
-                    return;
+
+                if (active && active.classList.contains("btn")) {
+                    var btns = Array.prototype.slice.call(box.querySelectorAll(".btn"));
+                    var btnIndex = btns.indexOf(active);
+                    if (dir === "down" && btnIndex < btns.length - 1) {
+                        btns[btnIndex + 1].focus();
+                        scrollFocusIntoView(box);
+                        e.preventDefault();
+                        return;
+                    }
+                    if (dir === "up" && btnIndex > 0) {
+                        btns[btnIndex - 1].focus();
+                        scrollFocusIntoView(box);
+                        e.preventDefault();
+                        return;
+                    }
                 }
-                if (dir === "up" && btnIndex === 0) {
-                    box.focus();
-                    scrollFocusIntoView(box);
-                    e.preventDefault();
-                    return;
-                }
-            } else if (active.classList.contains("box") && dir === "down") {
-                var firstBtn = box.querySelector(".btn");
-                if (firstBtn) {
-                    firstBtn.focus();
-                    scrollFocusIntoView(box);
-                    e.preventDefault();
-                    return;
-                }
+                return;
             }
 
-            if (moveBoxFocus(dir)) {
+            var activeEl = document.activeElement;
+            if (activeEl && activeEl.classList.contains("btn")) {
+                activeEl = activeEl.closest(".box") || activeEl;
+            }
+            if (activeEl && !getTvBoxLevelTargets().includes(activeEl)) {
+                activeEl = getFocusBox() || activeEl;
+            }
+
+            if (moveSpatialFocus(dir, getTvBoxLevelTargets(), activeEl)) {
                 e.preventDefault();
             }
         }
@@ -842,11 +953,29 @@
             }
         }
 
-        applyTvFocusMode();
-        window.addEventListener("resize", applyTvFocusMode);
+        setupTvFocusables();
+        window.addEventListener("resize", function () {
+            if (tvInsideBox && !isTvView()) {
+                tvInsideBox = false;
+                tvActiveBox = null;
+                document.querySelectorAll(".box").forEach(function (box) {
+                    box.classList.remove("tv-inside");
+                });
+            }
+            setupTvFocusables();
+            updateTvSectionHeads();
+        });
         document.addEventListener("keydown", handleTvKeydown);
+
+        var mainScrollEl = document.querySelector(".main-scroll");
+        if (mainScrollEl) {
+            mainScrollEl.addEventListener("scroll", updateTvSectionHeads);
+        }
+
         window.addEventListener("load", function () {
-            if (!isMobileView()) {
+            setupTvFocusables();
+            updateTvSectionHeads();
+            if (isTvView()) {
                 var firstBox = document.querySelector(".cards-grid .box");
                 if (firstBox) firstBox.focus();
             }
@@ -854,13 +983,17 @@
 
         document.querySelectorAll(".box").forEach(function (box) {
             box.addEventListener("focus", function () {
-                scrollFocusIntoView(box);
+                if (isTvView() && !tvInsideBox) {
+                    scrollFocusIntoView(box);
+                } else if (isMobileView()) {
+                    scrollFocusIntoView(box);
+                }
             });
         });
 
-        document.querySelectorAll(".btn").forEach(function (btn) {
+        document.querySelectorAll(".filter-btn").forEach(function (btn) {
             btn.addEventListener("focus", function () {
-                scrollFocusIntoView(btn.closest(".box") || btn);
+                if (isTvView()) scrollFocusIntoView(btn);
             });
         });
 
