@@ -118,6 +118,9 @@
             flex: 1;
             min-width: 0;
             padding: 12px var(--section-pad-x) 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .section-divider {
@@ -172,6 +175,7 @@
             display: grid;
             grid-template-columns: repeat(var(--card-cols), minmax(0, 1fr));
             gap: var(--card-gap);
+            width: 100%;
         }
 
         .box {
@@ -412,28 +416,23 @@
                 --section-pad-x: 0;
             }
 
-            /* Ø§Ù„Ø¨ÙˆÙƒØ³Ø§Øª: ØªÙ…Ø±ÙŠØ± Ø£ÙÙ‚ÙŠ ÙŠÙ…ÙŠÙ†/ÙŠØ³Ø§Ø± (Ù„ÙŠØ³ Ø´Ø¨ÙƒØ©) */
+            /* البوكسات في المنتصف — شبكة 2 أعمدة */
             .cards-grid {
-                display: flex;
-                flex-direction: row;
-                flex-wrap: nowrap;
-                grid-template-columns: none;
-                overflow-x: auto;
-                overflow-y: hidden;
-                gap: 12px;
-                padding: 4px 4px 10px;
-                scroll-snap-type: x mandatory;
-                -webkit-overflow-scrolling: touch;
-                overscroll-behavior-x: contain;
-                scrollbar-width: none;
-            }
-            .cards-grid::-webkit-scrollbar {
-                display: none;
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                width: min(92vw, 440px);
+                max-width: 440px;
+                margin: 0 auto;
+                overflow: visible;
+                padding: 4px 8px 10px;
+                scroll-snap-type: none;
             }
             .box {
-                flex: 0 0 min(78vw, 280px);
-                min-width: 220px;
-                scroll-snap-align: center;
+                flex: unset;
+                min-width: 0;
+                max-width: none;
+                width: 100%;
+                scroll-snap-align: unset;
             }
             .section {
                 padding-bottom: 12px;
@@ -456,16 +455,11 @@
                 --section-title-size: 16px;
             }
             .brand { font-size: 18px; }
-            .box {
-                flex-basis: min(82vw, 260px);
-                min-width: 200px;
-            }
         }
 
         @media (max-width: 420px) {
-            .box {
-                flex-basis: min(88vw, 240px);
-                min-width: 180px;
+            .cards-grid {
+                width: min(94vw, 400px);
             }
         }
 
