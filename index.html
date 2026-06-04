@@ -288,11 +288,10 @@
         }
 
         .progress-bar {
-            width: 100%;
+            width: 0%;
             height: 100%;
-            background: linear-gradient(90deg, #007bff, #00d4ff, #007bff);
-            background-size: 200% 100%;
-            animation: move 1.5s linear infinite;
+            background: linear-gradient(90deg, #007bff, #00d4ff);
+            transition: width 0.2s ease;
         }
 
         .timer-text {
@@ -316,11 +315,6 @@
             font-size: 12px;
             letter-spacing: 1px;
             font-weight: bold;
-        }
-
-        @keyframes move {
-            from { background-position: 200% 0; }
-            to { background-position: -200% 0; }
         }
 
         /* ØªÙ„ÙØ§Ø²: Ø´Ø¨ÙƒØ© ÙƒÙ…Ø§ ÙƒØ§Ù†Øª â€” Ù„Ø§ ØªØªØ£Ø«Ø± Ø¨Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„ */
@@ -527,7 +521,7 @@
                             <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/web-view-upd/releases/download/1.3/Ads+Regex+4.0.apk')">تحميل التطبيق</button>
                             <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
                             <div class="progress-container">
-                                <div class="timer-text">00:00.0</div>
+                                <div class="timer-text">0%</div>
                                 <div class="progress-bar"></div>
                             </div>
                         </div>
@@ -540,7 +534,7 @@
                             <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/web-view-upd/releases/download/1.3/Ads+Regex+4.0.apk')">تحميل التطبيق</button>
                             <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
                             <div class="progress-container">
-                                <div class="timer-text">00:00.0</div>
+                                <div class="timer-text">0%</div>
                                 <div class="progress-bar"></div>
                             </div>
                         </div>
@@ -563,7 +557,7 @@
                             <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/test/releases/download/1.2/DraGon.IpTv_non.apk')">تحميل التطبيق</button>
                             <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
                             <div class="progress-container">
-                                <div class="timer-text">00:00.0</div>
+                                <div class="timer-text">0%</div>
                                 <div class="progress-bar"></div>
                             </div>
                         </div>
@@ -576,7 +570,7 @@
                             <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/test/releases/download/1.2/DraGon.IpTv_non.apk')">تحميل التطبيق</button>
                             <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
                             <div class="progress-container">
-                                <div class="timer-text">00:00.0</div>
+                                <div class="timer-text">0%</div>
                                 <div class="progress-bar"></div>
                             </div>
                         </div>
@@ -590,7 +584,25 @@
     </div>
 
     <script>
-        let timerIntervals = new Map();
+        let progressPollers = new Map();
+
+        window.setDownloadProgress = function (percent) {
+            var raw = Math.max(0, Math.min(100, parseInt(percent, 10) || 0));
+            var value = Math.floor(raw / 5) * 5;
+            if (raw > 0 && value === 0) value = 5;
+            if (raw >= 100) value = 100;
+            var box = document.querySelector(".box.box-downloading");
+            if (!box) return;
+            var last = parseInt(box.getAttribute("data-dl-progress") || "0", 10);
+            if (value < last) value = last;
+            box.setAttribute("data-dl-progress", String(value));
+            var progressCont = box.querySelector(".progress-container");
+            var progressBar = box.querySelector(".progress-bar");
+            var progressLabel = box.querySelector(".timer-text");
+            if (progressCont) progressCont.style.display = "block";
+            if (progressBar) progressBar.style.width = value + "%";
+            if (progressLabel) progressLabel.innerText = value + "%";
+        };
         let tvInsideBox = false;
         let tvActiveBox = null;
 
@@ -809,29 +821,26 @@
         function startAction(btnElement, url) {
             var parentBox = btnElement.closest(".box");
             var progressCont = parentBox.querySelector(".progress-container");
-            var timerDisplay = parentBox.querySelector(".timer-text");
+            var progressBar = parentBox.querySelector(".progress-bar");
+            var progressLabel = parentBox.querySelector(".timer-text");
 
-            if (timerIntervals.has(parentBox)) {
-                clearInterval(timerIntervals.get(parentBox));
+            if (progressPollers.has(parentBox)) {
+                clearInterval(progressPollers.get(parentBox));
+                progressPollers.delete(parentBox);
             }
+
+            document.querySelectorAll(".box").forEach(function (b) {
+                b.classList.remove("box-downloading");
+            });
+            parentBox.classList.add("box-downloading");
+
             progressCont.style.display = "block";
             btnElement.innerText = "إعادة التحميل !";
+            if (progressBar) progressBar.style.width = "0%";
+            if (progressLabel) progressLabel.innerText = "0%";
+            parentBox.setAttribute("data-dl-progress", "0");
 
-            var startTime = Date.now();
-            var interval = setInterval(function () {
-                var elapsedTime = Date.now() - startTime;
-                var minutes = Math.floor(elapsedTime / 60000);
-                var seconds = Math.floor((elapsedTime % 60000) / 1000);
-                var deciseconds = Math.floor((elapsedTime % 1000) / 100);
-
-                timerDisplay.innerText =
-                    (minutes < 10 ? "0" : "") + minutes + ":" +
-                    (seconds < 10 ? "0" : "") + seconds + "." +
-                    deciseconds;
-            }, 100);
-
-            timerIntervals.set(parentBox, interval);
-            if (window.Android) {
+            if (window.Android && window.Android.triggerDownload) {
                 window.Android.triggerDownload(url);
             }
         }
@@ -841,16 +850,20 @@
                 if (box !== boxElement) {
                     var progressCont = box.querySelector(".progress-container");
                     var btn = box.querySelector(".btn");
-                    var timerDisplay = box.querySelector(".timer-text");
+                    var progressLabel = box.querySelector(".timer-text");
+                    var progressBar = box.querySelector(".progress-bar");
 
                     if (progressCont) progressCont.style.display = "none";
                     if (btn && btn.innerText === "إعادة التحميل !") btn.innerText = "تحميل التطبيق";
 
-                    if (timerIntervals.has(box)) {
-                        clearInterval(timerIntervals.get(box));
-                        timerIntervals.delete(box);
+                    if (progressPollers.has(box)) {
+                        clearInterval(progressPollers.get(box));
+                        progressPollers.delete(box);
                     }
-                    if (timerDisplay) timerDisplay.innerText = "00:00.0";
+                    if (progressLabel) progressLabel.innerText = "0%";
+                    if (progressBar) progressBar.style.width = "0%";
+                    box.classList.remove("box-downloading");
+                    box.removeAttribute("data-dl-progress");
                 }
             });
 
