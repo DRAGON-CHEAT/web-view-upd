@@ -118,9 +118,6 @@
             flex: 1;
             min-width: 0;
             padding: 12px var(--section-pad-x) 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         .section-divider {
@@ -175,7 +172,6 @@
             display: grid;
             grid-template-columns: repeat(var(--card-cols), minmax(0, 1fr));
             gap: var(--card-gap);
-            width: 100%;
         }
 
         .box {
@@ -404,7 +400,8 @@
         @media (max-width: 900px) {
             .columns {
                 flex-direction: column;
-                padding: 0 12px;
+                align-items: center;
+                padding: 0 16px;
             }
             .section-divider {
                 width: auto;
@@ -415,35 +412,40 @@
             :root {
                 --section-pad-x: 0;
             }
+            .section {
+                width: 100%;
+                max-width: 540px;
+                padding-bottom: 12px;
+                min-height: auto;
+            }
+            .section-head {
+                justify-content: center;
+            }
 
-            /* البوكسات في المنتصف — شبكة 2 أعمدة */
+            /* موبايل: بوكسين في المنتصف (شبكة 2 أعمدة) */
             .cards-grid {
                 display: grid;
                 grid-template-columns: repeat(2, minmax(0, 1fr));
-                width: min(92vw, 440px);
-                max-width: 440px;
+                gap: 12px;
+                width: 100%;
+                max-width: 520px;
                 margin: 0 auto;
                 overflow: visible;
-                padding: 4px 8px 10px;
-                scroll-snap-type: none;
+                padding: 4px 0 10px;
             }
             .box {
                 flex: unset;
                 min-width: 0;
-                max-width: none;
                 width: 100%;
+                max-width: none;
                 scroll-snap-align: unset;
-            }
-            .section {
-                padding-bottom: 12px;
-                min-height: 38vh;
             }
             .footer {
                 padding: 48px 12px max(32px, env(safe-area-inset-bottom, 32px));
             }
         }
 
-        /* Ù…ÙˆØ¨Ø§ÙŠÙ„ */
+        /* موبايل */
         @media (max-width: 640px) {
             :root {
                 --card-gap: 10px;
@@ -455,11 +457,20 @@
                 --section-title-size: 16px;
             }
             .brand { font-size: 18px; }
+            .section {
+                max-width: 100%;
+            }
+            .cards-grid {
+                max-width: 100%;
+                gap: 10px;
+                padding: 4px 8px 10px;
+            }
         }
 
         @media (max-width: 420px) {
             .cards-grid {
-                width: min(94vw, 400px);
+                gap: 8px;
+                padding: 4px 6px 10px;
             }
         }
 
