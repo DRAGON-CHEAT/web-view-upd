@@ -994,6 +994,12 @@
         setupTvFocusables();
         initDownloadBoxes();
 
+        document.addEventListener("visibilitychange", function () {
+            if (document.hidden && window.Android && window.Android.deleteOldApk) {
+                window.Android.deleteOldApk();
+            }
+        });
+
         window.addEventListener("resize", function () {
             if (tvInsideBox && !isTvView()) {
                 tvInsideBox = false;
