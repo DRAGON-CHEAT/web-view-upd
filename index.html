@@ -525,7 +525,7 @@
 
     <header class="top-header">
         <div class="top-bar">
-            <h1 class="brand">𝑫𝑹𝑨𝑮𝑶𝑵 𝑺𝑯𝑶𝑾 𝑬𝑿𝑻𝑬𝑵𝑺𝑰𝑶𝑵𝑺</h1>
+            <h1 class="brand">DRAGON SHOW</h1>
         </div>
         <div class="top-glow-down" aria-hidden="true"></div>
     </header>
@@ -543,8 +543,8 @@
                             <h2>DraGon-Móveis</h2>
                         </div>
                         <div class="btn-group">
-                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/960/releases/download/1.2/extension2_M-ok.apk')">تحميل التطبيق</button>
-                            <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
+                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/web-view-upd/releases/download/1.3/Ads+Regex+4.0.apk')">تحميل التطبيق</button>
+                            <button type="button" class="btn btn-clean btn-install">تثبيت الان</button>
                             <div class="progress-container">
                                 <div class="timer-text">0%</div>
                                 <div class="progress-bar"></div>
@@ -556,8 +556,8 @@
                             <h2>DraGon-IpTv</h2>
                         </div>
                         <div class="btn-group">
-                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/960/releases/download/1.0/extension1-ip-ok.apk')">تحميل التطبيق</button>
-                            <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
+                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/web-view-upd/releases/download/1.0/extension1.apk')">تحميل التطبيق</button>
+                            <button type="button" class="btn btn-clean btn-install">تثبيت الان</button>
                             <div class="progress-container">
                                 <div class="timer-text">0%</div>
                                 <div class="progress-bar"></div>
@@ -579,8 +579,8 @@
                             <h2>DraGon-Móveis</h2>
                         </div>
                         <div class="btn-group">
-                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/960/releases/download/1.3/extension2_Tv-ok.apk')">تحميل التطبيق</button>
-                            <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
+                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/web-view-upd/reoad/1.0.0/extension1.apk')">تحميل التطبيق</button>
+                            <button type="button" class="btn btn-clean btn-install">تثبيت الان</button>
                             <div class="progress-container">
                                 <div class="timer-text">0%</div>
                                 <div class="progress-bar"></div>
@@ -592,8 +592,8 @@
                             <h2>DraGon-IpTv</h2>
                         </div>
                         <div class="btn-group">
-                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/960/releases/download/1.0/extension1-ip-ok.apk')">تحميل التطبيق</button>
-                            <button type="button" class="btn btn-clean" onclick="window.Android.deleteOldApk()"> الغاء تثبيت</button>
+                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/web-view-upd/releases/download/1.0/extension1.apk')">تحميل التطبيق</button>
+                            <button type="button" class="btn btn-clean btn-install">تثبيت الان</button>
                             <div class="progress-container">
                                 <div class="timer-text">0%</div>
                                 <div class="progress-bar"></div>
@@ -634,12 +634,19 @@
                         cancelBtn = document.createElement("button");
                         cancelBtn.type = "button";
                         cancelBtn.className = "btn btn-cancel";
-                        cancelBtn.innerText = "الغاء التحميل";
+                        cancelBtn.innerText = "حذف الكاش!";
                         downloadBtn.insertAdjacentElement("afterend", cancelBtn);
                     }
                     if (cancelBtn) {
                         cancelBtn.onclick = function () {
                             cancelAction(cancelBtn);
+                        };
+                    }
+                    var installBtn = box.querySelector(".btn-install");
+                    if (installBtn) {
+                        installBtn.innerText = "تثبيت الان";
+                        installBtn.onclick = function () {
+                            installAction(installBtn);
                         };
                     }
                 });
@@ -890,6 +897,15 @@
 
             if (moveSpatialFocus(dir, getTvBoxLevelTargets(), activeEl)) {
                 e.preventDefault();
+            }
+        }
+
+        function installAction(btnElement) {
+            var parentBox = btnElement.closest(".box");
+            if (!parentBox) return;
+            var boxKey = parentBox.getAttribute("data-dl-key") || "";
+            if (window.Android && window.Android.installBoxDownload) {
+                window.Android.installBoxDownload(boxKey);
             }
         }
 
