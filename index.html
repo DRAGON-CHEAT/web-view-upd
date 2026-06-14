@@ -281,6 +281,38 @@
 
         .btn-clean:focus { background: #555b65; }
 
+        .btn-install {
+            background: #3a3f47;
+            color: #aaa;
+            width: 100%;
+            margin-bottom: 0;
+            font-size: calc(var(--btn-size) - 1px);
+        }
+
+        .btn-install.is-ready {
+            background: #1a3d1a;
+            color: #39ff14;
+        }
+
+        .btn-install.is-ready:focus {
+            background: #245a24;
+            outline: none;
+            box-shadow: 0 0 0 2px #39ff14;
+        }
+
+        .btn-install.is-not-ready {
+            background: #3a3f47;
+            color: #aaa;
+        }
+
+        .box-ready-install .btn-cancel {
+            display: none !important;
+        }
+
+        .box-ready-install .btn-dl {
+            width: 100%;
+        }
+
         .btn-cancel {
             display: none;
             background: #8b2e2e;
@@ -544,7 +576,7 @@
                         </div>
                         <div class="btn-group">
                             <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/960/releases/download/1.2/extension2_M-ok.apk')">تحميل التطبيق</button>
-                            <button type="button" class="btn btn-clean btn-install">تثبيت الان</button>
+                            <button type="button" class="btn btn-install is-not-ready">تثبيت الان</button>
                             <div class="progress-container">
                                 <div class="timer-text">0%</div>
                                 <div class="progress-bar"></div>
@@ -557,7 +589,7 @@
                         </div>
                         <div class="btn-group">
                             <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/960/releases/download/1.0/extension1-ip-ok.apk')">تحميل التطبيق</button>
-                            <button type="button" class="btn btn-clean btn-install">تثبيت الان</button>
+                            <button type="button" class="btn btn-install is-not-ready">تثبيت الان</button>
                             <div class="progress-container">
                                 <div class="timer-text">0%</div>
                                 <div class="progress-bar"></div>
@@ -580,7 +612,7 @@
                         </div>
                         <div class="btn-group">
                             <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/960/releases/download/1.3/extension2_Tv-ok.apk')">تحميل التطبيق</button>
-                            <button type="button" class="btn btn-clean btn-install">تثبيت الان</button>
+                            <button type="button" class="btn btn-install is-not-ready">تثبيت الان</button>
                             <div class="progress-container">
                                 <div class="timer-text">0%</div>
                                 <div class="progress-bar"></div>
@@ -589,11 +621,11 @@
                     </div>
                     <div class="box" tabindex="0" onfocus="resetBox(this)">
                         <div class="title-wrapper">
-                            <h2>𝐈𝐩𝐭𝐯-𝐋𝐢𝐬𝐭-𝐏𝐫𝐞>
+                            <h2>𝐈𝐩𝐭𝐯-𝐋𝐢𝐬𝐭-𝐏𝐫𝐞</h2>
                         </div>
                         <div class="btn-group">
                             <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/960/releases/download/1.0/extension1-ip-ok.apk')">تحميل التطبيق</button>
-                            <button type="button" class="btn btn-clean btn-install">تثبيت الان</button>
+                            <button type="button" class="btn btn-install is-not-ready">تثبيت الان</button>
                             <div class="progress-container">
                                 <div class="timer-text">0%</div>
                                 <div class="progress-bar"></div>
@@ -645,6 +677,8 @@
                     var installBtn = box.querySelector(".btn-install");
                     if (installBtn) {
                         installBtn.innerText = "تثبيت الان";
+                        installBtn.classList.add("is-not-ready");
+                        installBtn.classList.remove("is-ready");
                         installBtn.onclick = function () {
                             installAction(installBtn);
                         };
@@ -664,6 +698,41 @@
             if (progressCont) progressCont.style.display = "block";
             if (progressBar) progressBar.style.width = value + "%";
             if (progressLabel) progressLabel.innerText = value + "%";
+            if (value >= 100) {
+                enterReadyInstall(box);
+            }
+        }
+
+        function enterReadyInstall(box) {
+            if (!box) return;
+            box.classList.remove("box-downloading");
+            box.classList.add("box-ready-install");
+            if (progressPollers.has(box)) {
+                clearInterval(progressPollers.get(box));
+                progressPollers.delete(box);
+            }
+            if (activeDownloadBox === box) activeDownloadBox = null;
+            var progressCont = box.querySelector(".progress-container");
+            if (progressCont) progressCont.style.display = "none";
+            var installBtn = box.querySelector(".btn-install");
+            if (installBtn) {
+                installBtn.innerText = "تثبيت الان";
+                installBtn.classList.add("is-ready");
+                installBtn.classList.remove("is-not-ready");
+            }
+            var dlBtn = box.querySelector(".btn-dl");
+            if (dlBtn) dlBtn.innerText = "إعادة التحميل !";
+            box.setAttribute("data-dl-progress", "100");
+        }
+
+        function resetInstallUi(box) {
+            if (!box) return;
+            box.classList.remove("box-ready-install");
+            var installBtn = box.querySelector(".btn-install");
+            if (installBtn) {
+                installBtn.classList.remove("is-ready");
+                installBtn.classList.add("is-not-ready");
+            }
         }
 
         window.setDownloadProgress = function (percent, boxKey) {
@@ -682,7 +751,7 @@
                 box = document.querySelector(".box.box-downloading");
             }
             if (!box) return;
-            if (!box.classList.contains("box-downloading")) return;
+            if (!box.classList.contains("box-downloading") && !box.classList.contains("box-ready-install")) return;
             applyProgressToBox(box, value);
         };
         let tvInsideBox = false;
@@ -902,7 +971,7 @@
 
         function installAction(btnElement) {
             var parentBox = btnElement.closest(".box");
-            if (!parentBox) return;
+            if (!parentBox || !parentBox.classList.contains("box-ready-install")) return;
             var boxKey = parentBox.getAttribute("data-dl-key") || "";
             if (window.Android && window.Android.installBoxDownload) {
                 window.Android.installBoxDownload(boxKey);
@@ -921,6 +990,7 @@
 
             parentBox.classList.remove("box-downloading");
             parentBox.removeAttribute("data-dl-progress");
+            resetInstallUi(parentBox);
 
             var progressCont = parentBox.querySelector(".progress-container");
             var progressBar = parentBox.querySelector(".progress-bar");
@@ -952,6 +1022,7 @@
                 progressPollers.delete(parentBox);
             }
 
+            resetInstallUi(parentBox);
             parentBox.classList.add("box-downloading");
             activeDownloadBox = parentBox;
 
@@ -972,6 +1043,7 @@
                         if (pct >= 100) {
                             clearInterval(pollId);
                             progressPollers.delete(parentBox);
+                            enterReadyInstall(parentBox);
                         }
                     }, 250);
                     progressPollers.set(parentBox, pollId);
@@ -981,7 +1053,7 @@
 
         function resetBox(boxElement) {
             document.querySelectorAll(".box").forEach(function (box) {
-                if (box !== boxElement && !box.classList.contains("box-downloading")) {
+                if (box !== boxElement && !box.classList.contains("box-downloading") && !box.classList.contains("box-ready-install")) {
                     var progressCont = box.querySelector(".progress-container");
                     var btn = box.querySelector(".btn-dl");
                     var progressLabel = box.querySelector(".timer-text");
