@@ -786,6 +786,16 @@
             var dlBtn = box.querySelector(".btn-dl");
             if (dlBtn) dlBtn.innerText = "إعادة التحميل !";
             box.setAttribute("data-dl-progress", "100");
+            if (tvInsideBox && tvActiveBox === box) {
+                var visible = getVisibleBoxButtons(box);
+                box.querySelectorAll(".btn").forEach(function (btn) {
+                    btn.tabIndex = visible.indexOf(btn) >= 0 ? 0 : -1;
+                });
+                var active = document.activeElement;
+                if (!active || visible.indexOf(active) < 0) {
+                    if (visible.length) visible[0].focus();
+                }
+            }
         }
 
         function resetInstallUi(box) {
@@ -922,15 +932,26 @@
             return false;
         }
 
+        function getVisibleBoxButtons(box) {
+            if (!box) return [];
+            return Array.prototype.slice.call(box.querySelectorAll(".btn")).filter(function (btn) {
+                var style = window.getComputedStyle(btn);
+                if (style.display === "none" || style.visibility === "hidden") return false;
+                if (btn.getClientRects().length === 0) return false;
+                return true;
+            });
+        }
+
         function enterTvBox(box) {
             if (!box) return;
             tvInsideBox = true;
             tvActiveBox = box;
             box.classList.add("tv-inside");
-            var btns = box.querySelectorAll(".btn");
-            btns.forEach(function (btn) { btn.tabIndex = 0; });
-            var firstBtn = box.querySelector(".btn");
-            if (firstBtn) firstBtn.focus();
+            var btns = getVisibleBoxButtons(box);
+            box.querySelectorAll(".btn").forEach(function (btn) {
+                btn.tabIndex = btns.indexOf(btn) >= 0 ? 0 : -1;
+            });
+            if (btns.length) btns[0].focus();
             scrollFocusIntoView(box);
         }
 
@@ -996,8 +1017,14 @@
                 }
 
                 if (active && active.classList.contains("btn")) {
-                    var btns = Array.prototype.slice.call(box.querySelectorAll(".btn"));
+                    var btns = getVisibleBoxButtons(box);
                     var btnIndex = btns.indexOf(active);
+                    if (btnIndex < 0 && btns.length) {
+                        btns[0].focus();
+                        scrollFocusIntoView(box);
+                        e.preventDefault();
+                        return;
+                    }
                     if (dir === "down" && btnIndex < btns.length - 1) {
                         btns[btnIndex + 1].focus();
                         scrollFocusIntoView(box);
