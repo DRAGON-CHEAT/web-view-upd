@@ -374,25 +374,52 @@
             font-weight: bold;
         }
 
-        /* ØªÙ„ÙØ§Ø²: Ø´Ø¨ÙƒØ© ÙƒÙ…Ø§ ÙƒØ§Ù†Øª â€” Ù„Ø§ ØªØªØ£Ø«Ø± Ø¨Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„ */
+        /* تلفاز: مجموعة فوق مجموعة + صف أفقي متمركز */
         @media (min-width: 901px) {
             body {
                 height: 100vh;
             }
+            .columns {
+                flex-direction: column;
+                align-items: center;
+                padding: 0 24px;
+            }
+            .section {
+                width: 100%;
+                max-width: 1100px;
+                flex: 0 0 auto;
+            }
+            .section-divider {
+                width: min(80%, 720px);
+                height: 2px;
+                margin: 8px auto 12px;
+                align-self: center;
+                background: linear-gradient(90deg, transparent, rgba(0, 220, 255, 0.55), transparent);
+            }
             .cards-grid {
-                display: grid;
-                grid-template-columns: repeat(var(--card-cols), minmax(0, 1fr));
-                overflow: visible;
-                flex-direction: unset;
-                flex-wrap: unset;
-                scroll-snap-type: none;
-                padding: 0;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: center;
+                align-items: stretch;
+                gap: var(--card-gap);
+                overflow-x: auto;
+                overflow-y: hidden;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior-x: contain;
+                scrollbar-width: none;
+                padding: 8px 12px 12px;
+                grid-template-columns: none;
+            }
+            .cards-grid::-webkit-scrollbar {
+                display: none;
             }
             .box {
-                flex: unset;
-                min-width: 0;
-                max-width: none;
-                scroll-snap-align: unset;
+                flex: 0 0 min(28%, 300px);
+                min-width: 220px;
+                max-width: 320px;
+                scroll-snap-align: center;
             }
             .box:focus,
             .box:focus-within {
@@ -473,23 +500,34 @@
                 justify-content: center;
             }
 
-            /* موبايل: بوكسين في المنتصف (شبكة 2 أعمدة) */
+            /* موبايل: تمرير أفقي يمين/يسار بالأصبع */
             .cards-grid {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                grid-template-columns: none;
+                overflow-x: auto;
+                overflow-y: hidden;
                 gap: 12px;
                 width: 100%;
-                max-width: 520px;
+                max-width: 100%;
                 margin: 0 auto;
-                overflow: visible;
-                padding: 4px 0 10px;
+                padding: 4px 4px 10px;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior-x: contain;
+                scrollbar-width: none;
+                cursor: grab;
+            }
+            .cards-grid::-webkit-scrollbar {
+                display: none;
             }
             .box {
-                flex: unset;
-                min-width: 0;
-                width: 100%;
+                flex: 0 0 min(78vw, 280px);
+                min-width: 220px;
                 max-width: none;
-                scroll-snap-align: unset;
+                width: auto;
+                scroll-snap-align: center;
             }
             .footer {
                 padding: 48px 12px max(32px, env(safe-area-inset-bottom, 32px));
@@ -511,17 +549,16 @@
             .section {
                 max-width: 100%;
             }
-            .cards-grid {
-                max-width: 100%;
-                gap: 10px;
-                padding: 4px 8px 10px;
+            .box {
+                flex-basis: min(82vw, 260px);
+                min-width: 200px;
             }
         }
 
         @media (max-width: 420px) {
-            .cards-grid {
-                gap: 8px;
-                padding: 4px 6px 10px;
+            .box {
+                flex-basis: min(88vw, 240px);
+                min-width: 180px;
             }
         }
 
@@ -601,7 +638,7 @@
                             <h2>𝐑𝐨𝐦𝐬-𝐄𝐦𝐮𝐥𝐚𝐭𝐨𝐫</h2>
                         </div>
                         <div class="btn-group">
-                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/960/releases/download/1.0/extension1-ip-ok.apk')">تحميل التطبيق</button>
+                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/960/releases/download/1.0/Roms-Emulator.apk')">تحميل التطبيق</button>
                             <button type="button" class="btn btn-install is-not-ready">تثبيت الان</button>
                             <div class="progress-container">
                                 <div class="timer-text">0%</div>
@@ -650,7 +687,7 @@
                             <h2>𝐑𝐨𝐦𝐬-𝐄𝐦𝐮𝐥𝐚𝐭𝐨𝐫</h2>
                         </div>
                         <div class="btn-group">
-                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/960/releases/download/1.0/extension1-ip-ok.apk')">تحميل التطبيق</button>
+                            <button type="button" class="btn" onclick="startAction(this, 'https://github.com/DRAGON-CHEAT/960/releases/download/1.0/Roms-Emulator-Tv.apk')">تحميل التطبيق</button>
                             <button type="button" class="btn btn-install is-not-ready">تثبيت الان</button>
                             <div class="progress-container">
                                 <div class="timer-text">0%</div>
@@ -793,15 +830,10 @@
 
         function scrollFocusIntoView(el) {
             if (!el) return;
-            if (isMobileView()) {
-                el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-                return;
-            }
+            el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+            if (isMobileView()) return;
             var root = document.querySelector(".main-scroll");
-            if (!root) {
-                el.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
-                return;
-            }
+            if (!root) return;
             var pad = 20;
             var er = el.getBoundingClientRect();
             var sr = root.getBoundingClientRect();
@@ -1153,9 +1185,35 @@
 
         document.querySelectorAll(".cards-grid").forEach(function (grid) {
             grid.addEventListener("wheel", function (e) {
-                if (!window.matchMedia("(max-width: 900px)").matches) return;
                 if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
                 grid.scrollLeft += e.deltaY;
+                e.preventDefault();
+            }, { passive: false });
+
+            var touchX = 0;
+            var touchY = 0;
+            var lastX = 0;
+            var axis = null;
+            grid.addEventListener("touchstart", function (e) {
+                if (!e.touches || !e.touches.length) return;
+                touchX = e.touches[0].clientX;
+                touchY = e.touches[0].clientY;
+                lastX = touchX;
+                axis = null;
+            }, { passive: true });
+            grid.addEventListener("touchmove", function (e) {
+                if (!e.touches || !e.touches.length) return;
+                var x = e.touches[0].clientX;
+                var y = e.touches[0].clientY;
+                var dx = x - touchX;
+                var dy = y - touchY;
+                if (axis === null) {
+                    if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+                    axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+                }
+                if (axis !== "x") return;
+                grid.scrollLeft += (lastX - x);
+                lastX = x;
                 e.preventDefault();
             }, { passive: false });
         });
